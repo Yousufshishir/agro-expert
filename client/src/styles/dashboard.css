@@ -393,6 +393,24 @@
 }
 
 
+/* client/src/styles/dashboard.css */
+
+.page-content {
+    padding: 2rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.page-description {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+
 /* Weather Card */
 
 .weather-card {
