@@ -1,9 +1,9 @@
-// server/server.js
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import cropRoutes from './routes/cropRoutes.js'; // ✅ Added
 
 // Load env vars
 dotenv.config();
@@ -20,6 +20,7 @@ app.use(cors());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/crops', cropRoutes); // ✅ Added
 
 // Root route
 app.get('/', (req, res) => {

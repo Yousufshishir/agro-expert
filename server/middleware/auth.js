@@ -1,4 +1,5 @@
 // server/middleware/auth.js
+
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
@@ -33,4 +34,12 @@ const protect = async(req, res, next) => {
     }
 };
 
-export { protect };
+const admin = (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
+        next(); // User is admin, so proceed
+    } else {
+        res.status(401).json({ message: 'Not authorized as an admin' });
+    }
+};
+
+export { protect, admin };
