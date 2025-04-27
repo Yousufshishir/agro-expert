@@ -30,10 +30,10 @@ function App() {
               } 
             />
             <Route path="/crops" element={<PrivateRoute><CropsPage /></PrivateRoute>} />
-<Route path="/soil-analyzer" element={<SoilAnalyzerPage />} />
+<Route path="/soil-analyzer" element={<PrivateRoute><SoilAnalyzerPage /></PrivateRoute>} />
 <Route path="/weather" element={<PrivateRoute><WeatherPage /></PrivateRoute>} />
-<Route path="/recommendations" element={<RecommendationsPage />} />
-<Route path="/settings" element={<SettingsPage />} />
+<Route path="/recommendations" element={<PrivateRoute><RecommendationsPage /></PrivateRoute>} />
+<Route path="/settings" element={<PrivateRoute> <SettingsPage /> </PrivateRoute>} />
           </Routes>
         </div>
       </Router>
