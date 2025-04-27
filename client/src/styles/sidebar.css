@@ -136,28 +136,6 @@
     font-size: 1.75rem;
 }
 
-
-/* .logout-button {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    background-color: rgba(255, 45, 45, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    gap: 2px;
-} */
-
-
-/* .logout-button:hover {
-    background-color: rgba(255, 45, 45, 0.2);
-    color: white;
-    transform: translateX(5px)
-} */
-
 @media (max-width: 768px) {
     .dashboard-sidebar {
         width: 80px;
