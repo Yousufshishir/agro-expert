@@ -75,9 +75,14 @@ const LoginPage = () => {
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
       </form>
-      <p>
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
+      <div className="auth-links">
+  <p>
+    Don't have an account? <Link to="/register">Register</Link>
+  </p>
+  <p>
+    <Link to="/reset-password">Forgot Password?</Link>
+  </p>
+</div>
     </div>
   );
 };

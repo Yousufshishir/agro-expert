@@ -1,11 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import cropRoutes from './routes/cropRoutes.js'; // ✅ Added
 
-// Load env vars
+// Load environment variables
 dotenv.config();
 
 // Connect to database
@@ -17,6 +19,14 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+// Setup __dirname in ES Modules
+const __filename = fileURLToPath(
+    import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Make uploads folder static
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);

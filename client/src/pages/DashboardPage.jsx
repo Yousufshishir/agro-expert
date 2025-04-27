@@ -60,9 +60,10 @@ const DashboardPage = () => {
         }
 
         // If we have token and userId, try to fetch user data
-        const res = await axios.get(`http://localhost:5000/api/users/${userId}`, {
+        const res = await axios.get(`http://localhost:5000/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
 
         setUserData(res.data);
         setFormData({
