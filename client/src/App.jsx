@@ -29,9 +29,9 @@ function App() {
                 </PrivateRoute>
               } 
             />
-            <Route path="/crops" element={<CropsPage />} />
+            <Route path="/crops" element={<PrivateRoute><CropsPage /></PrivateRoute>} />
 <Route path="/soil-analyzer" element={<SoilAnalyzerPage />} />
-<Route path="/weather" element={<WeatherPage />} />
+<Route path="/weather" element={<PrivateRoute><WeatherPage /></PrivateRoute>} />
 <Route path="/recommendations" element={<RecommendationsPage />} />
 <Route path="/settings" element={<SettingsPage />} />
           </Routes>
