@@ -1,0 +1,191 @@
+/* client/src/styles/sidebar.css */
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(to bottom, #1a472a, #2a6f3e);
+    color: white;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    /* Prevent overflow outside sidebar */
+}
+
+.sidebar-header {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    /* Prevent header from shrinking */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.app-name {
+    font-size: 0.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    overflow-y: auto;
+    /* Make menu scrollable */
+    padding: 0 1rem;
+}
+
+
+/* Add scrollbar styling */
+
+.sidebar-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    gap: 12px;
+}
+
+.sidebar-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar-menu-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-weight: 600;
+    position: relative;
+}
+
+.sidebar-menu-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: #8cc63f;
+    border-radius: 0 4px 4px 0;
+}
+
+.menu-icon {
+    font-size: 1.25rem;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar-footer {
+    padding: 1.5rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    /* Prevent footer from shrinking */
+}
+
+.bangladesh-flag {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+}
+
+
+/* .logout-button {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background-color: rgba(255, 45, 45, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    gap: 2px;
+} */
+
+
+/* .logout-button:hover {
+    background-color: rgba(255, 45, 45, 0.2);
+    color: white;
+    transform: translateX(5px)
+} */
+
+@media (max-width: 768px) {
+    .dashboard-sidebar {
+        width: 80px;
+        padding: 0;
+    }
+    .sidebar-header {
+        padding: 1rem 0.5rem;
+    }
+    .sidebar-menu {
+        padding: 0 0.5rem;
+    }
+    .sidebar-footer {
+        padding: 1rem 0.5rem;
+    }
+    .app-name {
+        display: none;
+    }
+    .sidebar-menu-item span:not(.menu-icon) {
+        display: none;
+    }
+    .menu-icon {
+        font-size: 1.5rem;
+    }
+    .sidebar-menu-item,
+    .logout-button {
+        justify-content: center;
+    }
+    .logout-button span:not(.menu-icon) {
+        display: none;
+    }
+}

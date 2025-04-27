@@ -2,24 +2,33 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import '../styles/dashboard.css';  // Import the dashboard styles
+import { useNavigate } from 'react-router-dom';
+import '../styles/dashboard.css';
+import Sidebar from '../components/Sidebar';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    crops: 0,
-    soilTests: 0,
-    recommendations: 0
-  });
-  const [recentActivities, setRecentActivities] = useState([]);
-  const [weatherData, setWeatherData] = useState(null);
-  const [userCrops, setUserCrops] = useState([]);
-  const [availableCrops, setAvailableCrops] = useState([]);
   const [language, setLanguage] = useState('english'); // Default language
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    district: '',
+    farmSize: ''
+  });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
+
+  // Bangladesh districts for the dropdown
+  const districts = [
+    'Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Barisal', 
+    'Sylhet', 'Rangpur', 'Mymensingh', 'Comilla', 'Narayanganj',
+    'Jessore', 'Dinajpur', 'Bogra', 'Faridpur', 'Tangail'
+  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,20 +36,18 @@ const DashboardPage = () => {
         // First check if user data is already available in AuthContext
         if (user) {
           setUserData(user);
-          
-          // Fix: Use user.id instead of user._id
-          if (user.id) {
-            fetchUserStats(user.id);
-            fetchUserCrops(user.id);
-            fetchUserActivities(user.id);
-            fetchWeatherData();
-          }
-          
+          setFormData({
+            name: user.name || '',
+            email: user.email || '',
+            phone: user.phone || '',
+            address: user.address || '',
+            district: user.district || '',
+            farmSize: user.farmSize || ''
+          });
           setLoading(false);
           return;
         }
 
-// client/src/pages/DashboardPage.js (continued)
         // Try to get authentication data from localStorage
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
@@ -58,12 +65,14 @@ const DashboardPage = () => {
         });
 
         setUserData(res.data);
-        
-        // Fetch user-related data
-        fetchUserStats(userId);
-        fetchUserCrops(userId);
-        fetchUserActivities(userId);
-        fetchWeatherData();
+        setFormData({
+          name: res.data.name || '',
+          email: res.data.email || '',
+          phone: res.data.phone || '',
+          address: res.data.address || '',
+          district: res.data.district || '',
+          farmSize: res.data.farmSize || ''
+        });
         
         setLoading(false);
       } catch (err) {
@@ -72,105 +81,11 @@ const DashboardPage = () => {
       }
     };
 
-    const fetchUserStats = async (userId) => {
-      try {
-        // In a real app, this would be an API call
-        // For now we're using sample data
-        const res = await axios.get(`http://localhost:5000/api/users/${userId}/stats`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }).catch(() => {
-          // Fallback to demo data if API isn't ready
-          return {
-            data: {
-              crops: Math.floor(Math.random() * 10) + 1,
-              soilTests: Math.floor(Math.random() * 15) + 1,
-              recommendations: Math.floor(Math.random() * 8) + 1
-            }
-          };
-        });
-        
-        setStats(res.data);
-      } catch (error) {
-        console.error('Error fetching user stats:', error);
-      }
-    };
-
-    const fetchUserCrops = async (userId) => {
-      try {
-        // Fetch user's crops
-        const userCropsRes = await axios.get(`http://localhost:5000/api/users/${userId}/crops`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }).catch(() => {
-          // Fallback demo data
-          return { 
-            data: [] 
-          };
-        });
-        
-        setUserCrops(userCropsRes.data);
-        
-        // Fetch all available crops
-        const allCropsRes = await axios.get('http://localhost:5000/api/crops');
-        setAvailableCrops(allCropsRes.data);
-      } catch (error) {
-        console.error('Error fetching crops data:', error);
-      }
-    };
-
-    const fetchUserActivities = async (userId) => {
-      try {
-        // In a real app, this would be an API call
-        // For now we're using sample data
-        const res = await axios.get(`http://localhost:5000/api/users/${userId}/activities`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }).catch(() => {
-          // Fallback to demo data if API isn't ready
-          return {
-            data: [
-              { id: 1, action: 'Soil Test Submitted', date: '2025-04-22', status: 'completed' },
-              { id: 2, action: 'Crop Plan Created', date: '2025-04-20', status: 'in-progress' },
-              { id: 3, action: 'Weather Alert', date: '2025-04-18', status: 'alert' },
-            ]
-          };
-        });
-        
-        setRecentActivities(res.data);
-      } catch (error) {
-        console.error('Error fetching user activities:', error);
-      }
-    };
-
-    const fetchWeatherData = async () => {
-      try {
-        // In a real app, this would call a weather API
-        const weatherRes = await axios.get('http://localhost:5000/api/weather').catch(() => {
-          // Fallback to demo data if API isn't ready
-          return {
-            data: {
-              location: 'Your Farm',
-              current: { temp: 24, condition: 'Sunny', humidity: 65 },
-              forecast: [
-                { day: 'Today', high: 26, low: 18, condition: 'Sunny' },
-                { day: 'Tomorrow', high: 28, low: 19, condition: 'Partly Cloudy' },
-                { day: 'Day After', high: 25, low: 17, condition: 'Chance of Rain' }
-              ]
-            }
-          };
-        });
-        
-        setWeatherData(weatherRes.data);
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-      }
-    };
-
     fetchUserData();
   }, [navigate, user]);
 
   const handleLogout = () => {
-    // Use the existing logout function from AuthContext
     logout();
-    // Additionally clear localStorage items
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     navigate('/login');
@@ -180,47 +95,69 @@ const DashboardPage = () => {
     setLanguage(prev => prev === 'english' ? 'bengali' : 'english');
   };
 
-  // Function to add a crop to user's crops
-  // In the addCropToUser function:
-const addCropToUser = async (cropId) => {
-  try {
-    const res = await axios.post(`http://localhost:5000/api/users/${userData.id}/crops`, 
-      { cropId },
-      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
-    );
-    
-    // Fix: Use userData.id instead of userData._id
-    fetchUserCrops(userData.id);
-    
-    // Update stats
-    setStats(prev => ({
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
       ...prev,
-      crops: prev.crops + 1
+      [name]: value
     }));
-    
-    // Add to recent activities
-    const crop = availableCrops.find(c => c._id === cropId);
-    const newActivity = {
-      id: Date.now(),
-      action: `Added ${crop?.name?.[language] || 'New Crop'}`,
-      date: new Date().toISOString().split('T')[0],
-      status: 'completed'
-    };
-    
-    setRecentActivities(prev => [newActivity, ...prev].slice(0, 5));
-    
-  } catch (error) {
-    console.error('Error adding crop:', error);
-  }
-};
+  };
 
-  // Get status color based on activity status
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'alert': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const handleEditToggle = () => {
+    if (editMode) {
+      // If we're exiting edit mode, reset form data to current user data
+      setFormData({
+        name: userData.name || '',
+        email: userData.email || '',
+        phone: userData.phone || '',
+        address: userData.address || '',
+        district: userData.district || '',
+        farmSize: userData.farmSize || ''
+      });
+    }
+    setEditMode(!editMode);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      const userId = userData.id || localStorage.getItem('userId');
+      
+      const res = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setUserData(res.data);
+      setEditMode(false);
+      
+      // Show success message
+      alert(language === 'english' ? 'Profile updated successfully!' : 'প্রোফাইল সফলভাবে আপডেট হয়েছে!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert(language === 'english' ? 'Failed to update profile' : 'প্রোফাইল আপডেট করতে ব্যর্থ');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = userData.id || localStorage.getItem('userId');
+      
+      await axios.delete(`http://localhost:5000/api/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Clear storage and redirect to login
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      navigate('/login');
+      
+      // Show success message
+      alert(language === 'english' ? 'Account deleted successfully' : 'অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert(language === 'english' ? 'Failed to delete account' : 'অ্যাকাউন্ট মুছতে ব্যর্থ');
     }
   };
 
@@ -252,258 +189,280 @@ const addCropToUser = async (cropId) => {
 
   return (
     <div className="dashboard-layout">
-      {/* Sidebar */}
-      <div className="dashboard-sidebar">
-        <div className="sidebar-header">
-          <h2 className="app-name">Agro Expert</h2>
-        </div>
-        <div className="sidebar-menu">
-          <a href="#" className="sidebar-menu-item active">
-            <span className="menu-icon">📊</span>
-            <span>{language === 'english' ? 'Dashboard' : 'ড্যাশবোর্ড'}</span>
-          </a>
-          <Link to="/crops" className="sidebar-menu-item">
-            <span className="menu-icon">🌱</span>
-            <span>{language === 'english' ? 'Crops' : 'ফসল'}</span>
-          </Link>
-          <Link to="/soil-analyzer" className="sidebar-menu-item">
-            <span className="menu-icon">🧪</span>
-            <span>{language === 'english' ? 'Soil Tests' : 'মাটি পরীক্ষা'}</span>
-          </Link>
-          <Link to="/weather" className="sidebar-menu-item">
-            <span className="menu-icon">🌦️</span>
-            <span>{language === 'english' ? 'Weather' : 'আবহাওয়া'}</span>
-          </Link>
-          <Link to="/recommendations" className="sidebar-menu-item">
-            <span className="menu-icon">📋</span>
-            <span>{language === 'english' ? 'Recommendations' : 'সুপারিশমালা'}</span>
-          </Link>
-          <Link to="/settings" className="sidebar-menu-item">
-            <span className="menu-icon">⚙️</span>
-            <span>{language === 'english' ? 'Settings' : 'সেটিংস'}</span>
-          </Link>
-        </div>
-        <div className="sidebar-footer">
-          <button onClick={handleLogout} className="logout-button">
-            <span className="menu-icon">🚪</span>
-            <span>{language === 'english' ? 'Logout' : 'লগআউট'}</span>
-          </button>
-        </div>
-      </div>
+      {/* Import Sidebar Component */}
+      <Sidebar language={language} handleLogout={handleLogout} />
 
       {/* Main Content */}
       <div className="dashboard-main">
         {/* Top Navigation */}
         <nav className="dashboard-topnav">
-          <div className="search-box">
-            <input type="text" placeholder={language === 'english' ? 'Search...' : 'অনুসন্ধান...'} className="search-input" />
-            <button className="search-button">🔍</button>
+          <div className="breadcrumb">
+            <span className="breadcrumb-item">🏠 {language === 'english' ? 'Home' : 'হোম'}</span>
+            <span className="breadcrumb-separator">/</span>
+            <span className="breadcrumb-item active">{language === 'english' ? 'Dashboard' : 'ড্যাশবোর্ড'}</span>
           </div>
-          <div className="user-profile">
-            <button onClick={toggleLanguage} className="language-toggle ">
+          <div className="user-controls">
+            <button onClick={toggleLanguage} className="language-toggle">
               {language === 'english' ? 'বাংলা' : 'English'}
             </button>
             <div className="notification-icon">🔔</div>
-            <div className="avatar">{userData.name ? userData.name.charAt(0).toUpperCase() : 'U'}</div>
-            <div className="user-info">
-              <span className="user-name">{userData.name}</span>
-              <span className="user-role">{userData.role || (language === 'english' ? 'Farmer' : 'কৃষক')}</span>
+            <div className="avatar">
+              {userData.profileImage ? (
+                <img src={userData.profileImage} alt={userData.name} />
+              ) : (
+                userData.name ? userData.name.charAt(0).toUpperCase() : 'U'
+              )}
             </div>
           </div>
         </nav>
 
         {/* Dashboard Content */}
         <div className="dashboard-content">
-          <div className="welcome-section">
-            <h1>{language === 'english' ? `Welcome back, ${userData.name}!` : `স্বাগতম, ${userData.name}!`}</h1>
-            <p className="welcome-subtitle">
-              {language === 'english' 
-                ? "Here's what's happening with your farm today" 
-                : "আজ আপনার খামারে যা কিছু ঘটছে"}
-            </p>
+          <div className="profile-header">
+            <div className="bg-pattern"></div>
+            <div className="profile-header-content">
+              <div className="profile-avatar">
+                {userData.profileImage ? (
+                  <img src={userData.profileImage} alt={userData.name} />
+                ) : (
+                  <div className="profile-initial">{userData.name ? userData.name.charAt(0).toUpperCase() : 'U'}</div>
+                )}
+              </div>
+              <div className="profile-info">
+                <h1 className="profile-name">{userData.name}</h1>
+                <p className="profile-role">{userData.role || (language === 'english' ? 'Farmer' : 'কৃষক')}</p>
+                <div className="profile-meta">
+                  <div className="meta-item">
+                    <span className="meta-icon">📧</span>
+                    <span>{userData.email}</span>
+                  </div>
+                  {userData.phone && (
+                    <div className="meta-item">
+                      <span className="meta-icon">📱</span>
+                      <span>{userData.phone}</span>
+                    </div>
+                  )}
+                  {userData.district && (
+                    <div className="meta-item">
+                      <span className="meta-icon">📍</span>
+                      <span>{userData.district}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-icon crop-icon">🌾</div>
-              <div className="stat-info">
-                <h3 className="stat-title">{language === 'english' ? 'Active Crops' : 'সক্রিয় ফসল'}</h3>
-                <span className="stat-number">{stats.crops}</span>
+          <div className="profile-content">
+            <div className="profile-card">
+              <div className="profile-card-header">
+                <h2>{language === 'english' ? 'Your Account' : 'আপনার অ্যাকাউন্ট'}</h2>
+                <button onClick={handleEditToggle} className="edit-button">
+                  {editMode ? 
+                    (language === 'english' ? 'Cancel' : 'বাতিল') : 
+                    (language === 'english' ? 'Edit Profile' : 'প্রোফাইল সম্পাদনা করুন')}
+                </button>
               </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon soil-icon">🧪</div>
-              <div className="stat-info">
-                <h3 className="stat-title">{language === 'english' ? 'Soil Tests' : 'মাটি পরীক্ষা'}</h3>
-                <span className="stat-number">{stats.soilTests}</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon recommend-icon">📋</div>
-              <div className="stat-info">
-                <h3 className="stat-title">{language === 'english' ? 'Recommendations' : 'সুপারিশমালা'}</h3>
-                <span className="stat-number">{stats.recommendations}</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Main Content Grid */}
-          <div className="content-grid">
-            {/* Recent Activities */}
-            <div className="dashboard-card activities-card">
-              <h2 className="card-title">{language === 'english' ? 'Recent Activities' : 'সাম্প্রতিক কার্যক্রম'}</h2>
-              <div className="activities-list">
-                {recentActivities.map(activity => (
-                  <div key={activity.id} className="activity-item">
-                    <div className="activity-content">
-                      <div className="activity-title">{activity.action}</div>
-                      <div className="activity-date">{activity.date}</div>
+              {editMode ? (
+                <form onSubmit={handleSubmit} className="profile-form">
+                  <div className="form-group">
+                    <label>{language === 'english' ? 'Name' : 'নাম'}</label>
+                    <input 
+                      type="text" 
+                      name="name" 
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>{language === 'english' ? 'Email' : 'ইমেইল'}</label>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>{language === 'english' ? 'Phone' : 'ফোন'}</label>
+                    <input 
+                      type="tel" 
+                      name="phone" 
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>{language === 'english' ? 'Address' : 'ঠিকানা'}</label>
+                    <textarea 
+                      name="address" 
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      rows="2"
+                    ></textarea>
+                  </div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>{language === 'english' ? 'District' : 'জেলা'}</label>
+                      <select 
+                        name="district" 
+                        value={formData.district}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">{language === 'english' ? 'Select District' : 'জেলা নির্বাচন করুন'}</option>
+                        {districts.map(district => (
+                          <option key={district} value={district}>{district}</option>
+                        ))}
+                      </select>
                     </div>
-                    <div className={`activity-status ${getStatusColor(activity.status)}`}>
-                      {activity.status === 'completed' 
-                        ? (language === 'english' ? 'completed' : 'সম্পন্ন') 
-                        : activity.status === 'in-progress' 
-                          ? (language === 'english' ? 'in-progress' : 'চলমান')
-                          : (language === 'english' ? 'alert' : 'সতর্কতা')}
+                    <div className="form-group">
+                      <label>{language === 'english' ? 'Farm Size (acres)' : 'খামারের আকার (একর)'}</label>
+                      <input 
+                        type="number" 
+                        name="farmSize" 
+                        value={formData.farmSize}
+                        onChange={handleInputChange}
+                        min="0"
+                        step="0.1"
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-              <button className="view-all-button">
-                {language === 'english' ? 'View All Activities' : 'সমস্ত কার্যক্রম দেখুন'}
-              </button>
-            </div>
-
-            {/* Weather Card */}
-            {weatherData && (
-              <div className="dashboard-card weather-card">
-                <h2 className="card-title">{language === 'english' ? 'Weather Forecast' : 'আবহাওয়া পূর্বাভাস'}</h2>
-                <div className="current-weather">
-                  <div className="weather-location">{weatherData.location}</div>
-                  <div className="weather-now">
-                    <div className="weather-temp">{weatherData.current.temp}°C</div>
-                    <div className="weather-condition">
-                      {language === 'english' 
-                        ? weatherData.current.condition 
-                        : weatherData.current.condition === 'Sunny' 
-                          ? 'রৌদ্রোজ্জ্বল' 
-                          : weatherData.current.condition === 'Partly Cloudy' 
-                            ? 'আংশিক মেঘলা' 
-                            : weatherData.current.condition === 'Chance of Rain' 
-                              ? 'বৃষ্টির সম্ভাবনা' 
-                              : weatherData.current.condition}
+                  <div className="form-actions">
+                    <button type="submit" className="save-button">
+                      {language === 'english' ? 'Save Changes' : 'পরিবর্তন সংরক্ষণ করুন'}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="profile-details">
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">👤</span>
+                      <span>{language === 'english' ? 'Name' : 'নাম'}</span>
+                    </div>
+                    <div className="detail-value">{userData.name}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">📧</span>
+                      <span>{language === 'english' ? 'Email' : 'ইমেইল'}</span>
+                    </div>
+                    <div className="detail-value">{userData.email}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">📱</span>
+                      <span>{language === 'english' ? 'Phone' : 'ফোন'}</span>
+                    </div>
+                    <div className="detail-value">
+                      {userData.phone || (language === 'english' ? 'Not provided' : 'প্রদান করা হয়নি')}
                     </div>
                   </div>
-                  <div className="weather-humidity">
-                    {language === 'english' ? 'Humidity' : 'আর্দ্রতা'}: {weatherData.current.humidity}%
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">📍</span>
+                      <span>{language === 'english' ? 'Address' : 'ঠিকানা'}</span>
+                    </div>
+                    <div className="detail-value">
+                      {userData.address || (language === 'english' ? 'Not provided' : 'প্রদান করা হয়নি')}
+                    </div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">🏙️</span>
+                      <span>{language === 'english' ? 'District' : 'জেলা'}</span>
+                    </div>
+                    <div className="detail-value">
+                      {userData.district || (language === 'english' ? 'Not provided' : 'প্রদান করা হয়নি')}
+                    </div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">🌾</span>
+                      <span>{language === 'english' ? 'Farm Size' : 'খামারের আকার'}</span>
+                    </div>
+                    <div className="detail-value">
+                      {userData.farmSize ? `${userData.farmSize} ${language === 'english' ? 'acres' : 'একর'}` : 
+                       (language === 'english' ? 'Not provided' : 'প্রদান করা হয়নি')}
+                    </div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">
+                      <span className="detail-icon">🔐</span>
+                      <span>{language === 'english' ? 'Password' : 'পাসওয়ার্ড'}</span>
+                    </div>
+                    <div className="detail-value password-change">
+                      <span>••••••••</span>
+                      <button className="change-password-button">
+                        {language === 'english' ? 'Change Password' : 'পাসওয়ার্ড পরিবর্তন করুন'}
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className="weather-forecast">
-                  {weatherData.forecast.map((day, index) => (
-                    <div key={index} className="forecast-day">
-                      <div className="day-name">
+              )}
+              
+              {!editMode && (
+                <div className="danger-zone">
+                  <h3 className="danger-title">
+                    {language === 'english' ? 'Danger Zone' : 'বিপদ জোন'}
+                  </h3>
+                  <p className="danger-description">
+                    {language === 'english' 
+                      ? 'Once you delete your account, there is no going back. Please be certain.' 
+                      : 'আপনার অ্যাকাউন্ট মুছে ফেলার পর, ফিরে আসার কোন উপায় নেই। অনুগ্রহ করে নিশ্চিত হোন।'}
+                  </p>
+                  {showDeleteConfirm ? (
+                    <div className="delete-confirm">
+                      <p className="delete-warning">
                         {language === 'english' 
-                          ? day.day 
-                          : day.day === 'Today' 
-                            ? 'আজ' 
-                            : day.day === 'Tomorrow' 
-                              ? 'আগামীকাল' 
-                              : 'পরশু'}
-                      </div>
-                      <div className="day-condition">
-                        {language === 'english' 
-                          ? day.condition 
-                          : day.condition === 'Sunny' 
-                            ? 'রৌদ্রোজ্জ্বল' 
-                            : day.condition === 'Partly Cloudy' 
-                              ? 'আংশিক মেঘলা' 
-                              : day.condition === 'Chance of Rain' 
-                                ? 'বৃষ্টির সম্ভাবনা' 
-                                : day.condition}
-                      </div>
-                      <div className="day-temp">
-                        <span className="high-temp">{day.high}°</span>
-                        <span className="low-temp">{day.low}°</span>
+                          ? 'Are you sure you want to delete your account? This action cannot be undone.' 
+                          : 'আপনি কি নিশ্চিত যে আপনি আপনার অ্যাকাউন্ট মুছতে চান? এই পদক্ষেপ পূর্বাবস্থায় ফেরানো যাবে না।'}
+                      </p>
+                      <div className="delete-actions">
+                        <button onClick={handleDeleteAccount} className="confirm-delete-button">
+                          {language === 'english' ? 'Yes, Delete My Account' : 'হ্যাঁ, আমার অ্যাকাউন্ট মুছুন'}
+                        </button>
+                        <button onClick={() => setShowDeleteConfirm(false)} className="cancel-delete-button">
+                          {language === 'english' ? 'Cancel' : 'বাতিল করুন'}
+                        </button>
                       </div>
                     </div>
-                  ))}
+                  ) : (
+                    <button onClick={() => setShowDeleteConfirm(true)} className="delete-account-button">
+                      {language === 'english' ? 'Delete Account' : 'অ্যাকাউন্ট মুছুন'}
+                    </button>
+                  )}
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Your Crops Section */}
-          <div className="crops-section">
-            <h2 className="section-title">{language === 'english' ? 'Your Crops' : 'আপনার ফসল'}</h2>
-            
-            {userCrops.length > 0 ? (
-              <div className="user-crops-grid">
-                {userCrops.map(crop => (
-                  <div key={crop._id} className="crop-card">
-                    <div className="crop-image" style={{ backgroundImage: `url(${crop.image})` }}></div>
-                    <h3 className="crop-name">{crop.name[language]}</h3>
-                    <p className="crop-category">{crop.category[language]}</p>
-                    <Link to={`/crops/${crop._id}`} className="view-crop-button">
-                      {language === 'english' ? 'View Details' : 'বিস্তারিত দেখুন'}
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-crops-message">
-                {language === 'english' 
-                  ? "You haven't added any crops yet. Add crops to get personalized recommendations." 
-                  : "আপনি এখনও কোন ফসল যোগ করেননি। ব্যক্তিগতকৃত সুপারিশ পেতে ফসল যোগ করুন।"}
-              </div>
-            )}
-          </div>
-
-          {/* Available Crops Section */}
-          <div className="available-crops-section">
-            <h2 className="section-title">{language === 'english' ? 'Available Crops' : 'উপলব্ধ ফসল'}</h2>
-            
-            <div className="available-crops-grid">
-              {availableCrops.slice(0, 8).map(crop => (
-                <div key={crop._id} className="crop-card">
-                  <div className="crop-image" style={{ backgroundImage: `url(${crop.image || '/images/default-crop.jpg'})` }}></div>
-                  <h3 className="crop-name">{crop.name[language]}</h3>
-                  {crop.category && <p className="crop-category">{crop.category[language]}</p>}
-                  <button 
-                    onClick={() => addCropToUser(crop._id)} 
-                    className="add-crop-button"
-                  >
-                    {language === 'english' ? 'Add to My Crops' : 'আমার ফসলে যোগ করুন'}
-                  </button>
-                </div>
-              ))}
+              )}
             </div>
             
-            <Link to="/crops" className="view-all-button">
-              {language === 'english' ? 'View All Crops' : 'সমস্ত ফসল দেখুন'}
-            </Link>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="quick-actions">
-            <h2 className="section-title">{language === 'english' ? 'Quick Actions' : 'দ্রুত পদক্ষেপ'}</h2>
-            <div className="action-buttons">
-              <button className="action-button">
-                <span className="action-icon">➕</span>
-                <span>{language === 'english' ? 'Add Crop' : 'ফসল যোগ করুন'}</span>
-              </button>
-              <button className="action-button">
-                <span className="action-icon">🧪</span>
-                <span>{language === 'english' ? 'New Soil Test' : 'নতুন মাটি পরীক্ষা'}</span>
-              </button>
-              <button className="action-button">
-                <span className="action-icon">📊</span>
-                <span>{language === 'english' ? 'View Reports' : 'রিপোর্ট দেখুন'}</span>
-              </button>
-              <button className="action-button">
-                <span className="action-icon">📅</span>
-                <span>{language === 'english' ? 'Schedule Task' : 'কাজ নির্ধারণ করুন'}</span>
-              </button>
+            <div className="profile-card-secondary">
+              <div className="info-block">
+                <div className="info-icon">🌱</div>
+                <h3>{language === 'english' ? 'Farming Tips' : 'কৃষি পরামর্শ'}</h3>
+                <p>{language === 'english' 
+                  ? 'Complete your profile to receive personalized recommendations for your farm.' 
+                  : 'আপনার খামারের জন্য ব্যক্তিগতকৃত সুপারিশ পেতে আপনার প্রোফাইল সম্পূর্ণ করুন।'}</p>
+              </div>
+              
+              <div className="info-block">
+                <div className="info-icon">🧪</div>
+                <h3>{language === 'english' ? 'Soil Testing' : 'মাটি পরীক্ষা'}</h3>
+                <p>{language === 'english' 
+                  ? 'Regular soil testing helps you understand your farm better and improves crop yield.' 
+                  : 'নিয়মিত মাটি পরীক্ষা আপনাকে আপনার খামার আরও ভালোভাবে বুঝতে এবং ফসলের ফলন উন্নত করতে সাহায্য করে।'}</p>
+              </div>
+              
+              <div className="info-block">
+                <div className="info-icon">📊</div>
+                <h3>{language === 'english' ? 'Farm Analytics' : 'খামার বিশ্লেষণ'}</h3>
+                <p>{language === 'english' 
+                  ? 'Track your farm performance and get insights to maximize productivity.' 
+                  : 'আপনার খামারের কার্যক্ষমতা ট্র্যাক করুন এবং উৎপাদনশীলতা বাড়ানোর জন্য অন্তর্দৃষ্টি পান।'}</p>
+              </div>
             </div>
           </div>
         </div>
