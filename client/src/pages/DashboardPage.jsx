@@ -22,7 +22,24 @@ const DashboardPage = () => {
   });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
-
+// At the top of your DashboardPage component function, after const declarations
+useEffect(() => {
+  // Debug check for user info
+  const storedUserInfo = localStorage.getItem('userInfo');
+  if (storedUserInfo) {
+    try {
+      const parsed = JSON.parse(storedUserInfo);
+      console.log("Stored user info:", parsed);
+      console.log("User ID exists?", !!parsed._id);
+      console.log("User ID:", parsed._id);
+      console.log("Token exists?", !!parsed.token);
+    } catch (e) {
+      console.error("Error parsing stored user info:", e);
+    }
+  } else {
+    console.log("No user info in localStorage");
+  }
+}, []);
   // Bangladesh districts for the dropdown
   const districts = [
     'Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Barisal', 
@@ -31,57 +48,63 @@ const DashboardPage = () => {
   ];
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // First check if user data is already available in AuthContext
-        if (user) {
-          setUserData(user);
-          setFormData({
-            name: user.name || '',
-            email: user.email || '',
-            phone: user.phone || '',
-            address: user.address || '',
-            district: user.district || '',
-            farmSize: user.farmSize || ''
-          });
-          setLoading(false);
-          return;
-        }
+   // In DashboardPage.jsx, modify the fetchUserData function in useEffect:
 
-        // Try to get authentication data from localStorage
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-
-        // If no auth data is found, redirect to login
-        if (!token || !userId) {
-          console.log("No authentication data found in localStorage");
-          navigate('/login');
-          return;
-        }
-
-        // If we have token and userId, try to fetch user data
-        const res = await axios.get(`http://localhost:5000/api/users/profile`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-
-        setUserData(res.data);
+   const fetchUserData = async () => {
+    try {
+      // First check if user data is already available in AuthContext
+      if (user && user.token) {  
+        setUserData(user);
         setFormData({
-          name: res.data.name || '',
-          email: res.data.email || '',
-          phone: res.data.phone || '',
-          address: res.data.address || '',
-          district: res.data.district || '',
-          farmSize: res.data.farmSize || ''
+          name: user.name || '',
+          email: user.email || '',
+          phone: user.phone || '',
+          address: user.address || '',
+          district: user.district || '',
+          farmSize: user.farmSize || ''
         });
-        
         setLoading(false);
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        setLoading(false);
+        return;
       }
-    };
-
+  
+      // Try to get authentication data from localStorage
+      const userInfo = localStorage.getItem('userInfo');
+      
+      if (!userInfo) {
+        console.log("No authentication data found in localStorage");
+        navigate('/login');
+        return;
+      }
+  
+      // Parse and log localStorage data
+      const parsedInfo = JSON.parse(userInfo);
+      console.log('User Info in localStorage:', parsedInfo);
+      console.log('User ID from localStorage:', parsedInfo._id);
+  
+      const token = parsedInfo.token;
+  
+      // Fetch fresh user profile from backend
+      const res = await axios.get(`http://localhost:5000/api/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      setUserData(res.data);
+      setFormData({
+        name: res.data.name || '',
+        email: res.data.email || '',
+        phone: res.data.phone || '',
+        address: res.data.address || '',
+        district: res.data.district || '',
+        farmSize: res.data.farmSize || ''
+      });
+  
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching user data:', err);
+      setLoading(false);
+    }
+  };
+  
     fetchUserData();
   }, [navigate, user]);
 
@@ -119,48 +142,95 @@ const DashboardPage = () => {
     setEditMode(!editMode);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      const userId = userData.id || localStorage.getItem('userId');
-      
-      const res = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      setUserData(res.data);
-      setEditMode(false);
-      
-      // Show success message
-      alert(language === 'english' ? 'Profile updated successfully!' : 'প্রোফাইল সফলভাবে আপডেট হয়েছে!');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      alert(language === 'english' ? 'Failed to update profile' : 'প্রোফাইল আপডেট করতে ব্যর্থ');
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const userId = userData.id || localStorage.getItem('userId');
-      
-      await axios.delete(`http://localhost:5000/api/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      // Clear storage and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
+  // client/src/pages/DashboardPage.js
+// Replace the existing handleSubmit function with this:
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    // Get user info from localStorage
+    const userInfo = localStorage.getItem('userInfo');
+    if (!userInfo) {
+      alert(language === 'english' ? 'Authentication error. Please login again.' : 'অথেনটিকেশন ত্রুটি। অনুগ্রহ করে আবার লগইন করুন।');
       navigate('/login');
-      
-      // Show success message
-      alert(language === 'english' ? 'Account deleted successfully' : 'অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে');
-    } catch (error) {
-      console.error('Error deleting account:', error);
-      alert(language === 'english' ? 'Failed to delete account' : 'অ্যাকাউন্ট মুছতে ব্যর্থ');
+      return;
     }
-  };
+    
+    const parsedInfo = JSON.parse(userInfo);
+    const token = parsedInfo.token;
+    const userId = parsedInfo._id; // Make sure this matches the property name in your user object
+    
+    if (!userId) {
+      console.error('User ID not found');
+      alert(language === 'english' ? 'User ID not found' : 'ব্যবহারকারী আইডি পাওয়া যায়নি');
+      return;
+    }
+    
+    const res = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    // Update local storage with new user data
+    const updatedUserInfo = { ...parsedInfo, ...res.data };
+    localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+    
+    setUserData(res.data);
+    setEditMode(false);
+    
+    // Show success message
+    alert(language === 'english' ? 'Profile updated successfully!' : 'প্রোফাইল সফলভাবে আপডেট হয়েছে!');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    alert(language === 'english' ? 'Failed to update profile' : 'প্রোফাইল আপডেট করতে ব্যর্থ');
+  }
+};
+
+  // In DashboardPage.jsx, modify the handleDeleteAccount function:
+
+// client/src/pages/DashboardPage.js
+// Replace the existing handleDeleteAccount function with this:
+const handleDeleteAccount = async () => {
+  try {
+    const userInfo = localStorage.getItem('userInfo');
+    if (!userInfo) {
+      alert(language === 'english' ? 'Authentication error. Please login again.' : 'অথেনটিকেশন ত্রুটি। অনুগ্রহ করে আবার লগইন করুন।');
+      navigate('/login');
+      return;
+    }
+    
+    const parsedInfo = JSON.parse(userInfo);
+    console.log("User info from localStorage:", parsedInfo);
+    
+    const token = parsedInfo.token;
+    const userId = parsedInfo._id; // Make sure this property exists
+    
+    if (!userId) {
+      console.error('User ID not found in:', parsedInfo);
+      alert(language === 'english' ? 'User ID not found' : 'ব্যবহারকারী আইডি পাওয়া যায়নি');
+      return;
+    }
+    
+    console.log(`Attempting to delete user with ID: ${userId}`);
+    console.log(`Using token: ${token}`);
+    
+    const response = await axios.delete(`http://localhost:5000/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    console.log('Delete response:', response);
+    
+    // Clear storage and redirect to login
+    localStorage.removeItem('userInfo');
+    logout();
+    navigate('/login');
+    
+    // Show success message
+    alert(language === 'english' ? 'Account deleted successfully' : 'অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে');
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    console.error('Error response:', error.response?.data);
+    alert(language === 'english' ? `Failed to delete account: ${error.message}` : `অ্যাকাউন্ট মুছতে ব্যর্থ: ${error.message}`);
+  }
+};
 
   // Show loading state
   if (loading) {
@@ -187,7 +257,9 @@ const DashboardPage = () => {
       </div>
     );
   }
-
+  const handleChangePassword = () => {
+    navigate('/reset-password');
+  };
   return (
     <div className="dashboard-layout">
       {/* Import Sidebar Component */}
@@ -397,9 +469,9 @@ const DashboardPage = () => {
                     </div>
                     <div className="detail-value password-change">
                       <span>••••••••</span>
-                      <button className="change-password-button">
-                        {language === 'english' ? 'Change Password' : 'পাসওয়ার্ড পরিবর্তন করুন'}
-                      </button>
+                      <button className="change-password-button" onClick={handleChangePassword}>
+  {language === 'english' ? 'Change Password' : 'পাসওয়ার্ড পরিবর্তন করুন'}
+</button>
                     </div>
                   </div>
                 </div>

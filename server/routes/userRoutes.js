@@ -8,7 +8,9 @@ import {
     getUserProfile,
     findUserForReset,
     verifySecurityAnswer,
-    resetPassword
+    resetPassword,
+    updateUserProfile, // Add this
+    deleteUser
 } from '../controllers/userController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -53,10 +55,11 @@ function checkFileType(file, cb) {
 router.post('/', upload.single('profileImage'), registerUser);
 router.post('/login', loginUser);
 router.get('/profile', protect, getUserProfile);
-
+router.put('/:id', protect, updateUserProfile);
 // Password reset routes
 router.post('/reset-password/find', findUserForReset);
 router.post('/reset-password/verify', verifySecurityAnswer);
 router.post('/reset-password/reset', resetPassword);
+router.delete('/:id', protect, deleteUser);
 
 export default router;

@@ -12,12 +12,6 @@ const generateToken = (id) => {
 // @desc    Register a new user
 // @route   POST /api/users
 // @access  Public
-// @desc    Register a new user
-// @route   POST /api/users
-// @access  Public
-// @desc    Register a new user
-// @route   POST /api/users
-// @access  Public
 export const registerUser = async(req, res) => {
     try {
         const {
@@ -58,7 +52,6 @@ export const registerUser = async(req, res) => {
             securityAnswer2,
             securityQuestion3,
             securityAnswer3,
-            // profileImage will be handled separately if needed
         });
 
         if (user) {
@@ -84,8 +77,6 @@ export const registerUser = async(req, res) => {
     }
 };
 
-
-
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
@@ -93,7 +84,6 @@ export const loginUser = async(req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check for user email
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
@@ -149,7 +139,6 @@ export const findUserForReset = async(req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Return only the security questions (not the answers)
         res.json({
             securityQuestions: [
                 user.securityQuestion1,
@@ -179,7 +168,6 @@ export const verifySecurityAnswer = async(req, res) => {
         let isCorrect = false;
         let questionNumber = 0;
 
-        // Determine which security question was answered
         if (securityQuestion === user.securityQuestion1) {
             questionNumber = 1;
         } else if (securityQuestion === user.securityQuestion2) {
@@ -190,7 +178,6 @@ export const verifySecurityAnswer = async(req, res) => {
             return res.status(400).json({ message: 'Invalid security question' });
         }
 
-        // Verify the security answer
         isCorrect = await user.matchSecurityAnswer(questionNumber, securityAnswer);
 
         if (!isCorrect) {
@@ -219,7 +206,6 @@ export const resetPassword = async(req, res) => {
 
         let questionNumber = 0;
 
-        // Determine which security question was answered
         if (securityQuestion === user.securityQuestion1) {
             questionNumber = 1;
         } else if (securityQuestion === user.securityQuestion2) {
@@ -230,14 +216,12 @@ export const resetPassword = async(req, res) => {
             return res.status(400).json({ message: 'Invalid security question' });
         }
 
-        // Verify the security answer again for extra security
         const isCorrect = await user.matchSecurityAnswer(questionNumber, securityAnswer);
 
         if (!isCorrect) {
             return res.status(401).json({ message: 'Incorrect security answer' });
         }
 
-        // Update password
         user.password = newPassword;
         await user.save();
 
@@ -246,4 +230,97 @@ export const resetPassword = async(req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/users/:id
+// @access  Private
+const updateUserProfile = async(req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            res.status(404);
+            throw new Error('User not found');
+        }
+
+        if (req.user._id.toString() !== req.params.id) {
+            res.status(401);
+            throw new Error('Not authorized to update this profile');
+        }
+
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.phone = req.body.phone || user.phone;
+        user.address = req.body.address || user.address;
+        user.district = req.body.district || user.district;
+        user.farmSize = req.body.farmSize || user.farmSize;
+
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
+        const updatedUser = await user.save();
+
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            phone: updatedUser.phone,
+            address: updatedUser.address,
+            district: updatedUser.district,
+            farmSize: updatedUser.farmSize,
+            token: req.user.token
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// @desc    Delete user
+// @route   DELETE /api/users/:id
+// @access  Private
+// In userController.js
+const deleteUser = async(req, res) => {
+    try {
+        console.log('Delete user request for ID:', req.params.id);
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            console.log('User not found with ID:', req.params.id);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('Found user:', user.name);
+
+        // If you want to temporarily bypass this check for testing
+        // comment it out or modify it
+        /*
+        if (req.user._id.toString() !== req.params.id) {
+          console.log('Auth error: Request user ID:', req.user._id, 'Param ID:', req.params.id);
+          return res.status(401).json({ message: 'Not authorized to delete this account' });
+        }
+        */
+
+        await User.deleteOne({ _id: req.params.id });
+        console.log('User deleted successfully');
+
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error in deleteUser:', error);
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Final export
+export {
+    registerUser,
+    loginUser,
+    getUserProfile,
+    findUserForReset,
+    verifySecurityAnswer,
+    resetPassword,
+    updateUserProfile,
+    deleteUser
 };
