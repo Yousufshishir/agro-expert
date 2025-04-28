@@ -1,14 +1,21 @@
 // client/src/pages/WeatherPage.js
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/Sidebar'; // Add this import
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 import '../styles/dashboard.css';
 import '../styles/WeatherPage.css';
 
-const WeatherPage = ({ language, handleLogout }) => {
-  const [weatherData, setWeatherData] = useState(null);
+const WeatherPage = () => {
+  const { user, logout } = useAuth();
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [language, setLanguage] = useState('english'); // Default language
+  const [weatherData, setWeatherData] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
   const [error, setError] = useState(null);
   const [city, setCity] = useState('Dhaka');
+  const navigate = useNavigate();
   
   const apiKey = 'c8f214e1be934c85ae9163541252704';
   
@@ -33,8 +40,41 @@ const WeatherPage = ({ language, handleLogout }) => {
   };
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // First check if user data is already available in AuthContext
+        if (user && user.token) {  
+          setUserData(user);
+          setLoading(false);
+          return;
+        }
+    
+        // Try to get authentication data from localStorage
+        const userInfo = localStorage.getItem('userInfo');
+        
+        if (!userInfo) {
+          console.log("No authentication data found in localStorage");
+          navigate('/login');
+          return;
+        }
+    
+        // Parse and log localStorage data
+        const parsedInfo = JSON.parse(userInfo);
+        
+        setUserData(parsedInfo);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setLoading(false);
+      }
+    };
+    
+    fetchUserData();
+  }, [navigate, user]);
+
+  useEffect(() => {
     const fetchWeatherData = async () => {
-      setLoading(true);
+      setWeatherLoading(true);
       try {
         // Using WeatherAPI.com endpoints
         const response = await fetch(
@@ -52,12 +92,22 @@ const WeatherPage = ({ language, handleLogout }) => {
         setError('Failed to fetch weather data. Please try again later.');
         console.error('Weather fetch error:', err);
       } finally {
-        setLoading(false);
+        setWeatherLoading(false);
       }
     };
 
     fetchWeatherData();
   }, [city, apiKey]);
+
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem('userInfo');
+    navigate('/login');
+  };
+
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'english' ? 'bengali' : 'english');
+  };
 
   const handleCityChange = (e) => {
     setCity(e.target.value);
@@ -72,6 +122,16 @@ const WeatherPage = ({ language, handleLogout }) => {
     });
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="loader"></div>
+        <div className="text-xl ml-4">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-layout">
       {/* Sidebar Component */}
@@ -85,6 +145,19 @@ const WeatherPage = ({ language, handleLogout }) => {
             <span className="breadcrumb-item">🏠 {language === 'english' ? 'Home' : 'হোম'}</span>
             <span className="breadcrumb-separator">/</span>
             <span className="breadcrumb-item active">{language === 'english' ? 'Weather' : 'আবহাওয়া'}</span>
+          </div>
+          <div className="user-controls">
+            <button onClick={toggleLanguage} className="language-toggle">
+              {language === 'english' ? 'বাংলা' : 'English'}
+            </button>
+            <div className="notification-icon">🔔</div>
+            <div className="avatar">
+              {userData?.profileImage ? (
+                <img src={userData.profileImage} alt={userData.name} />
+              ) : (
+                userData?.name ? userData.name.charAt(0).toUpperCase() : 'U'
+              )}
+            </div>
           </div>
         </nav>
 
@@ -102,11 +175,11 @@ const WeatherPage = ({ language, handleLogout }) => {
             </div>
           </div>
 
-          {loading && <div className="loading-message">⏳ {language === 'english' ? 'Loading weather data...' : 'আবহাওয়া ডেটা লোড হচ্ছে...'}</div>}
+          {weatherLoading && <div className="loading-message">⏳ {language === 'english' ? 'Loading weather data...' : 'আবহাওয়া ডেটা লোড হচ্ছে...'}</div>}
           
           {error && <div className="error-message">❌ {error}</div>}
           
-          {!loading && !error && weatherData && (
+          {!weatherLoading && !error && weatherData && (
             <div className="weather-container">
               <div className="weather-main">
                 <div className="weather-icon">
