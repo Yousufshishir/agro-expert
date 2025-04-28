@@ -315,12 +315,10 @@ const deleteUser = async(req, res) => {
 
 // Final export
 export {
-    registerUser,
-    loginUser,
-    getUserProfile,
-    findUserForReset,
-    verifySecurityAnswer,
-    resetPassword,
+
+
+
+
     updateUserProfile,
     deleteUser
 };

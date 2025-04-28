@@ -1,10 +1,4 @@
-/* client/src/pages/WeatherPage.css */
-
-.weather-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
+/* client/src/styles/WeatherPage.css */
 
 .weather-header {
     display: flex;
