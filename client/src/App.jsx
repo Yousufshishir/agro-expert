@@ -13,6 +13,7 @@ import CropsPage from './pages/CropsPage';
 import WeatherPage from './pages/WeatherPage';
 import RecommendationsPage from './pages/RecommendationsPage';
 import SettingsPage from './pages/SettingsPage';
+import CropDetailPage from './pages/CropDetailPage';
 function App() {
   return (
     <AuthProvider>
@@ -32,6 +33,7 @@ function App() {
               } 
             />
             <Route path="/crops" element={<PrivateRoute><CropsPage /></PrivateRoute>} />
+            <Route path="/crops/:id" element={<CropDetailPage />} />
 <Route path="/soil-analyzer" element={<PrivateRoute><SoilAnalyzerPage /></PrivateRoute>} />
 <Route path="/weather" element={<PrivateRoute><WeatherPage /></PrivateRoute>} />
 <Route path="/recommendations" element={<PrivateRoute><RecommendationsPage /></PrivateRoute>} />
