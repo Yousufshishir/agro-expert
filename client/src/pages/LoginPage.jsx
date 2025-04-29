@@ -32,7 +32,13 @@ const LoginPage = () => {
       });
       
       login(response.data);
-      navigate('/dashboard');
+      
+      // Redirect based on user role
+      if (response.data.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       setError(
         error.response && error.response.data.message
@@ -76,13 +82,13 @@ const LoginPage = () => {
         </button>
       </form>
       <div className="auth-links">
-  <p>
-    Don't have an account? <Link to="/register">Register</Link>
-  </p>
-  <p>
-    <Link to="/reset-password">Forgot Password?</Link>
-  </p>
-</div>
+        <p>
+          Don't have an account? <Link to="/register">Register</Link>
+        </p>
+        <p>
+          <Link to="/reset-password">Forgot Password?</Link>
+        </p>
+      </div>
     </div>
   );
 };

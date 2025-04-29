@@ -80,6 +80,7 @@ export const registerUser = async(req, res) => {
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
+// server/controllers/userController.js (update the loginUser function)
 export const loginUser = async(req, res) => {
     try {
         const { email, password } = req.body;
@@ -91,6 +92,12 @@ export const loginUser = async(req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phone: user.phone,
+                address: user.address,
+                division: user.division,
+                district: user.district,
+                farmSize: user.farmSize,
+                profileImage: user.profileImage,
                 role: user.role,
                 token: generateToken(user._id),
             });
