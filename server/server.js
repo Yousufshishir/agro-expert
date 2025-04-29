@@ -5,7 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
-import cropRoutes from './routes/cropRoutes.js'; // ✅ Added
+import cropRoutes from './routes/cropRoutes.js';
+import soilDataRoutes from './routes/soilDataRoutes.js'; // ✅ Added
 
 // Load environment variables
 dotenv.config();
@@ -30,7 +31,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);
-app.use('/api/crops', cropRoutes); // ✅ Added
+app.use('/api/crops', cropRoutes);
+app.use('/api/soil-data', soilDataRoutes); // ✅ Added
 
 // Root route
 app.get('/', (req, res) => {

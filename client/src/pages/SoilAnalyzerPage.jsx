@@ -25,6 +25,10 @@ const SoilAnalyzerPage = () => {
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [recommendations, setRecommendations] = useState(null);
   const [analysisHistory, setAnalysisHistory] = useState([]);
+  const [location, setLocation] = useState('');
+  const [analysisCount, setAnalysisCount] = useState(0);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [saveError, setSaveError] = useState('');
   
   useEffect(() => {
     const fetchUserData = async () => {
@@ -32,6 +36,10 @@ const SoilAnalyzerPage = () => {
         // First check if user data is already available in AuthContext
         if (user && user.token) {  
           setUserData(user);
+          
+          // Fetch soil analysis history from the API
+          await fetchSoilData(user.token);
+          
           setLoading(false);
           return;
         }
@@ -55,25 +63,11 @@ const SoilAnalyzerPage = () => {
         });
     
         setUserData(res.data);
+        
+        // Fetch soil analysis history from the API
+        await fetchSoilData(token);
+        
         setLoading(false);
-
-        // Fetch soil analysis history (mock data for now)
-        setAnalysisHistory([
-          { 
-            date: '2025-04-15', 
-            soilType: 'Loamy', 
-            ph: 6.5, 
-            moisture: 45, 
-            nutrients: { n: 40, p: 30, k: 25 } 
-          },
-          { 
-            date: '2025-03-22', 
-            soilType: 'Clay', 
-            ph: 7.2, 
-            moisture: 60, 
-            nutrients: { n: 25, p: 45, k: 30 } 
-          }
-        ]);
       } catch (err) {
         console.error('Error fetching user data:', err);
         setLoading(false);
@@ -82,6 +76,19 @@ const SoilAnalyzerPage = () => {
     
     fetchUserData();
   }, [navigate, user]);
+
+  const fetchSoilData = async (token) => {
+    try {
+      const { data } = await axios.get('http://localhost:5000/api/soil-data', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setAnalysisHistory(data.soilData);
+      setAnalysisCount(data.analysisCount);
+    } catch (error) {
+      console.error('Error fetching soil data:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -117,8 +124,64 @@ const SoilAnalyzerPage = () => {
     }
   };
 
-  const analyzeSoil = () => {
-    // Simulate analysis results
+  const analyzeSoil = async () => {
+    if (!soilType) {
+      setSaveError(language === 'english' ? 'Please select a soil type' : 'দয়া করে মাটির ধরন নির্বাচন করুন');
+      return;
+    }
+    
+    setSaveError('');
+    setSaveMessage('');
+    
+    // Generate recommendations for display only (not saved)
+    generateRecommendations();
+    
+    // Save soil data to database
+    try {
+      const token = user?.token || JSON.parse(localStorage.getItem('userInfo'))?.token;
+      
+      if (!token) {
+        setSaveError(language === 'english' ? 'Authentication error' : 'অনুমোদন ত্রুটি');
+        return;
+      }
+      
+      const soilData = {
+        soilType,
+        phLevel,
+        moistureLevel,
+        nitrogen: nitrogenLevel,
+        phosphorus: phosphorusLevel,
+        potassium: potassiumLevel,
+        location
+      };
+      
+      const { data } = await axios.post(
+        'http://localhost:5000/api/soil-data',
+        soilData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Update the analysis count
+      setAnalysisCount(data.analysisCount);
+      
+      // Fetch updated soil data
+      await fetchSoilData(token);
+      
+      setSaveMessage(language === 'english' ? 'Soil data saved successfully!' : 'মাটির তথ্য সফলভাবে সংরক্ষিত হয়েছে!');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSaveMessage('');
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error saving soil data:', error);
+      setSaveError(language === 'english' ? 'Error saving soil data' : 'মাটির তথ্য সংরক্ষণ করতে ত্রুটি');
+    }
+  };
+  
+  const generateRecommendations = () => {
+    // Generate recommendations (for display only, not saved)
     let cropRecommendations = [];
     let fertilizerRecommendations = [];
     let irrigationTips = [];
@@ -200,17 +263,12 @@ const SoilAnalyzerPage = () => {
       fertilizers: fertilizerRecommendations,
       irrigation: irrigationTips
     });
+  };
 
-    // Add to history
-    const newAnalysis = {
-      date: new Date().toISOString().split('T')[0],
-      soilType,
-      ph: phLevel,
-      moisture: moistureLevel,
-      nutrients: { n: nitrogenLevel, p: phosphorusLevel, k: potassiumLevel }
-    };
-    
-    setAnalysisHistory(prev => [newAnalysis, ...prev]);
+  // Format date for display
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
   };
 
   // Show loading state
@@ -260,8 +318,8 @@ const SoilAnalyzerPage = () => {
             </h1>
             <p className="page-subtitle">
               {language === 'english' 
-                ? 'Analyze your soil parameters and get crop recommendations' 
-                : 'আপনার মাটির পরামিতি বিশ্লেষণ করুন এবং ফসলের পরামর্শ পান'}
+                ? `Analyze your soil parameters (${analysisCount} analysis performed)` 
+                : `আপনার মাটির পরামিতি বিশ্লেষণ করুন (${analysisCount} বিশ্লেষণ সম্পন্ন হয়েছে)`}
             </p>
           </div>
 
@@ -328,6 +386,17 @@ const SoilAnalyzerPage = () => {
                   </div>
                 </div>
 
+                <div className="form-group">
+                  <label>{language === 'english' ? 'Location (Optional)' : 'অবস্থান (ঐচ্ছিক)'}</label>
+                  <input 
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder={language === 'english' ? 'e.g. North field' : 'যেমন উত্তর ক্ষেত্র'}
+                    className="location-input"
+                  />
+                </div>
+
                 <div className="advanced-toggle">
                   <button 
                     className="toggle-button"
@@ -386,113 +455,141 @@ const SoilAnalyzerPage = () => {
                   </div>
                 )}
 
-                <div className="analyze-button-container">
+{saveMessage && (
+                  <div className="success-message">
+                    {saveMessage}
+                  </div>
+                )}
+
+                {saveError && (
+                  <div className="error-message">
+                    {saveError}
+                  </div>
+                )}
+
+                <div className="form-actions">
                   <button 
-                    className="analyze-button" 
+                    className="analyze-button"
                     onClick={analyzeSoil}
-                    disabled={!soilType}
                   >
-                    🔬 {language === 'english' ? 'Analyze Soil' : 'মাটি বিশ্লেষণ করুন'}
+                    {language === 'english' ? 'Analyze Soil' : 'মাটি বিশ্লেষণ করুন'}
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="results-container">
-              {recommendations ? (
-                <div className="recommendation-card">
-                  <div className="card-header">
-                    <h2>{language === 'english' ? '🌿 Recommendations' : '🌿 সুপারিশসমূহ'}</h2>
-                  </div>
-                  <div className="recommendation-content">
-                    <div className="recommendation-section">
-                      <h3>
-                        {language === 'english' ? '🍅 Recommended Crops' : '🍅 সুপারিশকৃত ফসল'}
-                      </h3>
-                      <ul className="recommendation-list">
-                        {recommendations.crops.map((crop, index) => (
-                          <li key={index}>{crop}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="recommendation-section">
-                      <h3>
-                        {language === 'english' ? '🧪 Fertilizer Recommendations' : '🧪 সার সুপারিশ'}
-                      </h3>
-                      <ul className="recommendation-list">
-                        {recommendations.fertilizers.map((fertilizer, index) => (
-                          <li key={index}>{fertilizer}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="recommendation-section">
-                      <h3>
-                        {language === 'english' ? '💧 Irrigation Tips' : '💧 সেচ পরামর্শ'}
-                      </h3>
-                      <ul className="recommendation-list">
-                        {recommendations.irrigation.length > 0 ? (
-                          recommendations.irrigation.map((tip, index) => (
-                            <li key={index}>{tip}</li>
-                          ))
-                        ) : (
-                          <li>
-                            {language === 'english' 
-                              ? 'Current moisture levels are adequate' 
-                              : 'বর্তমান আর্দ্রতার মাত্রা পর্যাপ্ত'}
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="placeholder-card">
-                  <div className="placeholder-icon">🔍</div>
-                  <p>
-                    {language === 'english' 
-                      ? 'Select soil parameters and click "Analyze Soil" to get recommendations' 
-                      : 'মাটির পরামিতি নির্বাচন করুন এবং সুপারিশ পেতে "মাটি বিশ্লেষণ করুন" ক্লিক করুন'}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {analysisHistory.length > 0 && (
-              <div className="history-card">
+            {/* Recommendations Section */}
+            {recommendations && (
+              <div className="recommendations-card">
                 <div className="card-header">
-                  <h2>
-                    {language === 'english' ? '📜 Analysis History' : '📜 বিশ্লেষণ ইতিহাস'}
-                  </h2>
+                  <h2>{language === 'english' ? '🌱 Recommendations' : '🌱 সুপারিশসমূহ'}</h2>
                 </div>
-                <div className="history-table-container">
-                  <table className="history-table">
-                    <thead>
-                      <tr>
-                        <th>{language === 'english' ? 'Date' : 'তারিখ'}</th>
-                        <th>{language === 'english' ? 'Soil Type' : 'মাটির ধরন'}</th>
-                        <th>pH</th>
-                        <th>{language === 'english' ? 'Moisture' : 'আর্দ্রতা'}</th>
-                        <th>{language === 'english' ? 'N-P-K' : 'এন-পি-কে'}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {analysisHistory.map((record, index) => (
-                        <tr key={index}>
-                          <td>{record.date}</td>
-                          <td>{record.soilType}</td>
-                          <td>{record.ph}</td>
-                          <td>{record.moisture}%</td>
-                          <td>{record.nutrients.n}-{record.nutrients.p}-{record.nutrients.k}</td>
-                        </tr>
+                <div className="recommendations-content">
+                  <div className="recommendation-section">
+                    <h3>{language === 'english' ? 'Recommended Crops' : 'সুপারিশকৃত ফসল'}</h3>
+                    <ul className="crop-list">
+                      {recommendations.crops.map((crop, index) => (
+                        <li key={index} className="crop-item">{crop}</li>
                       ))}
-                    </tbody>
-                  </table>
+                    </ul>
+                  </div>
+                  
+                  <div className="recommendation-section">
+                    <h3>{language === 'english' ? 'Fertilizer Recommendations' : 'সারের সুপারিশ'}</h3>
+                    <ul>
+                      {recommendations.fertilizers.map((fert, index) => (
+                        <li key={index}>{fert}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="recommendation-section">
+                    <h3>{language === 'english' ? 'Irrigation Tips' : 'সেচ পরামর্শ'}</h3>
+                    <ul>
+                      {recommendations.irrigation.map((tip, index) => (
+                        <li key={index}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             )}
           </div>
+
+          {/* Analysis History Section */}
+          {analysisHistory.length > 0 && (
+            <div className="analysis-history-section">
+              <h2>{language === 'english' ? 'Analysis History' : 'বিশ্লেষণ ইতিহাস'}</h2>
+              <div className="history-table-container">
+                <table className="history-table">
+                  <thead>
+                    <tr>
+                      <th>{language === 'english' ? 'Date' : 'তারিখ'}</th>
+                      <th>{language === 'english' ? 'Soil Type' : 'মাটির ধরন'}</th>
+                      <th>{language === 'english' ? 'pH' : 'পিএইচ'}</th>
+                      <th>{language === 'english' ? 'Moisture' : 'আর্দ্রতা'}</th>
+                      <th>{language === 'english' ? 'Location' : 'অবস্থান'}</th>
+                      <th>{language === 'english' ? 'Actions' : 'কার্যক্রম'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {analysisHistory.map((analysis) => (
+                      <tr key={analysis._id}>
+                        <td>{formatDate(analysis.createdAt)}</td>
+                        <td>
+                          {language === 'english' 
+                            ? analysis.soilType.charAt(0).toUpperCase() + analysis.soilType.slice(1) 
+                            : analysis.soilType === 'sandy' ? 'বালিময়' 
+                              : analysis.soilType === 'clay' ? 'এঁটেল'
+                              : analysis.soilType === 'loamy' ? 'দোআঁশ'
+                              : 'পলিময়'
+                          }
+                        </td>
+                        <td>{analysis.phLevel}</td>
+                        <td>{analysis.moistureLevel}%</td>
+                        <td>{analysis.location || '-'}</td>
+                        <td>
+                          <button 
+                            className="view-details-btn"
+                            onClick={() => navigate(`/soil-analysis/${analysis._id}`)}
+                          >
+                            {language === 'english' ? 'View' : 'দেখুন'}
+                          </button>
+                          <button 
+                            className="delete-btn"
+                            onClick={async () => {
+                              try {
+                                const token = user?.token || JSON.parse(localStorage.getItem('userInfo'))?.token;
+                                
+                                await axios.delete(
+                                  `http://localhost:5000/api/soil-data/${analysis._id}`,
+                                  { headers: { Authorization: `Bearer ${token}` } }
+                                );
+                                
+                                // Refresh analysis history after deletion
+                                await fetchSoilData(token);
+                                
+                                setSaveMessage(language === 'english' ? 'Record deleted successfully' : 'রেকর্ড সফলভাবে মুছে ফেলা হয়েছে');
+                                
+                                setTimeout(() => {
+                                  setSaveMessage('');
+                                }, 3000);
+                              } catch (error) {
+                                console.error('Error deleting record:', error);
+                                setSaveError(language === 'english' ? 'Error deleting record' : 'রেকর্ড মুছতে ত্রুটি');
+                              }
+                            }}
+                          >
+                            {language === 'english' ? 'Delete' : 'মুছুন'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
