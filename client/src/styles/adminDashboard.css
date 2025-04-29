@@ -33,11 +33,13 @@
 .sidebar-header h2 {
     margin: 0;
     font-size: 1.5rem;
+    color: #fff;
 }
 
 .sidebar-user {
     padding: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #4c3b3b;
 }
 
 .user-info p {
