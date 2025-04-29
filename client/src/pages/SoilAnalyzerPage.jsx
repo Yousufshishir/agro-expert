@@ -9,7 +9,7 @@ import '../styles/soilanalyzer.css';
 import Sidebar from '../components/Sidebar';
 
 const SoilAnalyzerPage = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState('english'); // Default language
@@ -91,8 +91,8 @@ const SoilAnalyzerPage = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    logout();
+    localStorage.removeItem('userInfo');
     navigate('/login');
   };
 
