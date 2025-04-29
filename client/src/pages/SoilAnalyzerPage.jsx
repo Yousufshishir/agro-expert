@@ -467,129 +467,127 @@ const SoilAnalyzerPage = () => {
                   </div>
                 )}
 
-                <div className="form-actions">
+                <div className="analyze-button-container">
                   <button 
                     className="analyze-button"
                     onClick={analyzeSoil}
                   >
-                    {language === 'english' ? 'Analyze Soil' : 'মাটি বিশ্লেষণ করুন'}
+                    {language === 'english' ? '🔍 Analyze Soil' : '🔍 মাটি বিশ্লেষণ করুন'}
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Recommendations Section */}
             {recommendations && (
               <div className="recommendations-card">
                 <div className="card-header">
-                  <h2>{language === 'english' ? '🌱 Recommendations' : '🌱 সুপারিশসমূহ'}</h2>
+                  <h2>{language === 'english' ? '🌱 Recommendations' : '🌱 সুপারিশ'}</h2>
                 </div>
-                <div className="recommendations-content">
+                <div className="recommendation-content">
                   <div className="recommendation-section">
-                    <h3>{language === 'english' ? 'Recommended Crops' : 'সুপারিশকৃত ফসল'}</h3>
-                    <ul className="crop-list">
+                    <h3>{language === 'english' ? '🌽 Recommended Crops' : '🌽 সুপারিশকৃত ফসল'}</h3>
+                    <ul className="recommendation-list">
                       {recommendations.crops.map((crop, index) => (
-                        <li key={index} className="crop-item">{crop}</li>
+                        <li key={index}>{crop}</li>
                       ))}
                     </ul>
                   </div>
                   
                   <div className="recommendation-section">
-                    <h3>{language === 'english' ? 'Fertilizer Recommendations' : 'সারের সুপারিশ'}</h3>
-                    <ul>
-                      {recommendations.fertilizers.map((fert, index) => (
-                        <li key={index}>{fert}</li>
+                    <h3>{language === 'english' ? '🧪 Fertilizer Recommendations' : '🧪 সার সুপারিশ'}</h3>
+                    <ul className="recommendation-list">
+                      {recommendations.fertilizers.map((fertilizer, index) => (
+                        <li key={index}>{fertilizer}</li>
                       ))}
                     </ul>
                   </div>
                   
                   <div className="recommendation-section">
-                    <h3>{language === 'english' ? 'Irrigation Tips' : 'সেচ পরামর্শ'}</h3>
-                    <ul>
-                      {recommendations.irrigation.map((tip, index) => (
-                        <li key={index}>{tip}</li>
-                      ))}
+                    <h3>{language === 'english' ? '💧 Irrigation Tips' : '💧 সেচ টিপস'}</h3>
+                    <ul className="recommendation-list">
+                      {recommendations.irrigation.length > 0 ? (
+                        recommendations.irrigation.map((tip, index) => (
+                          <li key={index}>{tip}</li>
+                        ))
+                      ) : (
+                        <li>{language === 'english' ? 'Current moisture level appears adequate' : 'বর্তমান আর্দ্রতার মাত্রা যথেষ্ট বলে মনে হচ্ছে'}</li>
+                      )}
                     </ul>
                   </div>
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Analysis History Section */}
-          {analysisHistory.length > 0 && (
-            <div className="analysis-history-section">
-              <h2>{language === 'english' ? 'Analysis History' : 'বিশ্লেষণ ইতিহাস'}</h2>
-              <div className="history-table-container">
-                <table className="history-table">
-                  <thead>
-                    <tr>
-                      <th>{language === 'english' ? 'Date' : 'তারিখ'}</th>
-                      <th>{language === 'english' ? 'Soil Type' : 'মাটির ধরন'}</th>
-                      <th>{language === 'english' ? 'pH' : 'পিএইচ'}</th>
-                      <th>{language === 'english' ? 'Moisture' : 'আর্দ্রতা'}</th>
-                      <th>{language === 'english' ? 'Location' : 'অবস্থান'}</th>
-                      <th>{language === 'english' ? 'Actions' : 'কার্যক্রম'}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {analysisHistory.map((analysis) => (
-                      <tr key={analysis._id}>
-                        <td>{formatDate(analysis.createdAt)}</td>
-                        <td>
-                          {language === 'english' 
-                            ? analysis.soilType.charAt(0).toUpperCase() + analysis.soilType.slice(1) 
-                            : analysis.soilType === 'sandy' ? 'বালিময়' 
-                              : analysis.soilType === 'clay' ? 'এঁটেল'
-                              : analysis.soilType === 'loamy' ? 'দোআঁশ'
-                              : 'পলিময়'
-                          }
-                        </td>
-                        <td>{analysis.phLevel}</td>
-                        <td>{analysis.moistureLevel}%</td>
-                        <td>{analysis.location || '-'}</td>
-                        <td>
-                          <button 
-                            className="view-details-btn"
-                            onClick={() => navigate(`/soil-analysis/${analysis._id}`)}
-                          >
-                            {language === 'english' ? 'View' : 'দেখুন'}
-                          </button>
-                          <button 
-                            className="delete-btn"
-                            onClick={async () => {
-                              try {
-                                const token = user?.token || JSON.parse(localStorage.getItem('userInfo'))?.token;
-                                
-                                await axios.delete(
-                                  `http://localhost:5000/api/soil-data/${analysis._id}`,
-                                  { headers: { Authorization: `Bearer ${token}` } }
-                                );
-                                
-                                // Refresh analysis history after deletion
-                                await fetchSoilData(token);
-                                
-                                setSaveMessage(language === 'english' ? 'Record deleted successfully' : 'রেকর্ড সফলভাবে মুছে ফেলা হয়েছে');
-                                
-                                setTimeout(() => {
-                                  setSaveMessage('');
-                                }, 3000);
-                              } catch (error) {
-                                console.error('Error deleting record:', error);
-                                setSaveError(language === 'english' ? 'Error deleting record' : 'রেকর্ড মুছতে ত্রুটি');
+            {analysisHistory.length > 0 && (
+              <div className="history-card">
+                <div className="card-header">
+                  <h2>{language === 'english' ? '📜 Analysis History' : '📜 বিশ্লেষণ ইতিহাস'}</h2>
+                </div>
+                <div className="history-content">
+                  <div className="history-table-container">
+                    <table className="history-table">
+                      <thead>
+                        <tr>
+                          <th>{language === 'english' ? 'Date' : 'তারিখ'}</th>
+                          <th>{language === 'english' ? 'Soil Type' : 'মাটির ধরন'}</th>
+                          <th>{language === 'english' ? 'pH' : 'পিএইচ'}</th>
+                          <th>{language === 'english' ? 'Moisture' : 'আর্দ্রতা'}</th>
+                          <th>{language === 'english' ? 'Location' : 'অবস্থান'}</th>
+                          <th>{language === 'english' ? 'Actions' : 'অ্যাকশন'}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analysisHistory.map((analysis) => (
+                          <tr key={analysis._id}>
+                            <td>{formatDate(analysis.createdAt)}</td>
+                            <td>
+                              {language === 'english' 
+                                ? analysis.soilType.charAt(0).toUpperCase() + analysis.soilType.slice(1) 
+                                : analysis.soilType === 'sandy' 
+                                  ? 'বালিময়' 
+                                  : analysis.soilType === 'clay' 
+                                    ? 'এঁটেল' 
+                                    : analysis.soilType === 'loamy' 
+                                      ? 'দোআঁশ' 
+                                      : 'পলিময়'
                               }
-                            }}
-                          >
-                            {language === 'english' ? 'Delete' : 'মুছুন'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            </td>
+                            <td>{analysis.phLevel}</td>
+                            <td>{analysis.moistureLevel}%</td>
+                            <td>{analysis.location || '-'}</td>
+                            <td>
+                              <button 
+                                className="view-details-button"
+                                onClick={() => navigate(`/soil-analysis/${analysis._id}`)}
+                              >
+                                {language === 'english' ? 'View' : 'দেখুন'}
+                              </button>
+                              <button 
+                                className="delete-button"
+                                onClick={async () => {
+                                  try {
+                                    const token = user?.token || JSON.parse(localStorage.getItem('userInfo'))?.token;
+                                    await axios.delete(`http://localhost:5000/api/soil-data/${analysis._id}`, {
+                                      headers: { Authorization: `Bearer ${token}` }
+                                    });
+                                    await fetchSoilData(token);
+                                  } catch (error) {
+                                    console.error('Error deleting soil data:', error);
+                                  }
+                                }}
+                              >
+                                {language === 'english' ? 'Delete' : 'মুছুন'}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
