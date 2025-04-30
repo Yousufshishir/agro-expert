@@ -431,7 +431,7 @@ const analyzeSoil = async () => {
     const headers = ['Date', 'Soil Type', 'pH', 'Moisture', 'N', 'P', 'K', 'Location', 'Notes'];
     
     const csvData = filteredHistory.map(item => [
-      formatDate(item.createdAt),
+      item.createdAt,
       item.soilType,
       item.phLevel,
       item.moistureLevel,
