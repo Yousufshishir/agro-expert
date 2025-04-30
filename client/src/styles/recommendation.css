@@ -1,0 +1,166 @@
+/* client/src/styles/recommendation.css */
+
+.recommendation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.welcome-card {
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #4caf50;
+    margin-bottom: 1rem;
+}
+
+.welcome-message h2 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.welcome-message p {
+    color: #34495e;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.soil-summary-card,
+.recommendation-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.soil-summary-content {
+    padding: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.soil-param {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #f5f7fa;
+    border-radius: 8px;
+}
+
+.param-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-right: 0.5rem;
+    min-width: 90px;
+}
+
+.param-value {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.recommendation-list {
+    padding: 1.25rem;
+}
+
+.recommendation-item {
+    display: flex;
+    margin-bottom: 0.75rem;
+    align-items: flex-start;
+}
+
+.recommendation-bullet {
+    color: #4caf50;
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-right: 0.5rem;
+}
+
+.recommendation-text {
+    color: #34495e;
+    line-height: 1.5;
+}
+
+.back-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.back-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.back-button:hover {
+    background-color: #2980b9;
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    .soil-summary-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Card header styling */
+
+.card-header {
+    background-color: #f5f7fa;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2c3e50;
+}
+
+
+/* No data message */
+
+.no-data-message {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+
+/* Additional styling for recommendation cards */
+
+.recommendation-card .card-header {
+    border-left: 5px solid;
+}
+
+.recommendation-card:nth-child(3) .card-header {
+    border-left-color: #e67e22;
+    /* Crop recommendations */
+}
+
+.recommendation-card:nth-child(4) .card-header {
+    border-left-color: #9b59b6;
+    /* Fertilizer recommendations */
+}
+
+.recommendation-card:nth-child(5) .card-header {
+    border-left-color: #2ecc71;
+    /* Soil improvement tips */
+}
