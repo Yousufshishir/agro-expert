@@ -491,6 +491,45 @@
     font-size: 0.875rem;
 }
 
+
+/* Add these to your soilanalyzer.css file */
+
+.location-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.location-input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.detect-location-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.detect-location-btn:hover {
+    background-color: #45a049;
+}
+
+.location-status {
+    font-size: 0.9rem;
+    margin-top: 5px;
+    color: #666;
+}
+
 .sort-order-button {
     background: #f9f9f9;
     border: 1px solid #ddd;

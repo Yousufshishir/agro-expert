@@ -157,7 +157,81 @@ const SoilAnalyzerPage = () => {
       setOrganicMatter(4);
     }
   };
+// Add these functions to your SoilAnalyzerPage component
 
+// Add this state for location status
+const [locationStatus, setLocationStatus] = useState('');
+
+// Add this function to get the user's current location
+const getLocation = () => {
+  setLocationStatus(language === 'english' ? 'Detecting location...' : 'অবস্থান সনাক্ত করা হচ্ছে...');
+  
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      // Success callback
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        // Use reverse geocoding to get human-readable address
+        reverseGeocode(latitude, longitude);
+      },
+      // Error callback
+      (error) => {
+        console.error('Error getting location:', error);
+        setLocationStatus(
+          language === 'english' 
+            ? 'Could not get location. ' + error.message 
+            : 'অবস্থান পাওয়া যায়নি। ' + error.message
+        );
+      }
+    );
+  } else {
+    setLocationStatus(
+      language === 'english' 
+        ? 'Geolocation is not supported by this browser.' 
+        : 'এই ব্রাউজার দ্বারা জিওলোকেশন সমর্থিত নয়।'
+    );
+  }
+};
+
+// Add this function to convert coordinates to address
+const reverseGeocode = async (latitude, longitude) => {
+  try {
+    // Using Nominatim OpenStreetMap API for reverse geocoding
+    const response = await axios.get(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    );
+    
+    if (response.data && response.data.display_name) {
+      // Set location with the address returned
+      const address = response.data.display_name;
+      // Get a shorter version of the address - usually city, state, country
+      const shortAddress = [
+        response.data.address.village || response.data.address.town || response.data.address.city,
+        response.data.address.state,
+        response.data.address.country
+      ].filter(Boolean).join(', ');
+      
+      setLocation(shortAddress || address);
+      setLocationStatus('');
+    } else {
+      setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+      setLocationStatus(
+        language === 'english' 
+          ? 'Address not found, using coordinates.' 
+          : 'ঠিকানা পাওয়া যায়নি, স্থানাঙ্ক ব্যবহার করা হচ্ছে।'
+      );
+    }
+  } catch (error) {
+    console.error('Error in reverse geocoding:', error);
+    setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+    setLocationStatus(
+      language === 'english' 
+        ? 'Error getting address, using coordinates instead.' 
+        : 'ঠিকানা পেতে ত্রুটি, পরিবর্তে স্থানাঙ্ক ব্যবহার করা হচ্ছে।'
+    );
+  }
+};
   const analyzeSoil = async () => {
     if (!soilType) {
       setSaveError(language === 'english' ? 'Please select a soil type' : 'দয়া করে মাটির ধরন নির্বাচন করুন');
@@ -526,15 +600,25 @@ const SoilAnalyzerPage = () => {
                   </div>
 
                   <div className="form-group">
-                    <label>{language === 'english' ? 'Location (Optional)' : 'অবস্থান (ঐচ্ছিক)'}</label>
-                    <input 
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder={language === 'english' ? 'e.g. North field' : 'যেমন উত্তর ক্ষেত্র'}
-                      className="location-input"
-                    />
-                  </div>
+  <label>{language === 'english' ? 'Location' : 'অবস্থান'}</label>
+  <div className="location-input-container">
+    <input 
+      type="text"
+      value={location}
+      onChange={(e) => setLocation(e.target.value)}
+      placeholder={language === 'english' ? 'e.g. North field' : 'যেমন উত্তর ক্ষেত্র'}
+      className="location-input"
+    />
+    <button 
+      type="button" 
+      onClick={getLocation} 
+      className="detect-location-btn"
+    >
+      📍 {language === 'english' ? 'Detect' : 'সনাক্ত করুন'}
+    </button>
+  </div>
+  {locationStatus && <div className="location-status">{locationStatus}</div>}
+</div>
                 </div>
 
                 <div className="form-row">
