@@ -37,10 +37,10 @@ const Sidebar = ({ language, handleLogout }) => {
           <span className="menu-icon">🌦️</span>
           <span>{language === 'english' ? 'Weather' : 'আবহাওয়া'}</span>
         </Link>
-        <Link to="/recommendations" className={`sidebar-menu-item ${isActive('/recommendations')}`}>
+        {/* <Link to="/recommendations" className={`sidebar-menu-item ${isActive('/recommendations')}`}>
           <span className="menu-icon">📋</span>
           <span>{language === 'english' ? 'Recommendations' : 'সুপারিশমালা'}</span>
-        </Link>
+        </Link> */}
         <Link to="/calendar" className={`sidebar-menu-item ${isActive('/calendar')}`}>
           <span className="menu-icon">📅</span>
           <span>{language === 'english' ? 'Farming Calendar' : 'কৃষি ক্যালেন্ডার'}</span>

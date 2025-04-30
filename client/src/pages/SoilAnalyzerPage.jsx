@@ -279,12 +279,32 @@ const analyzeSoil = async () => {
     // Fetch updated soil data
     await fetchSoilData(token);
     
-    setSaveMessage(language === 'english' ? 'Soil data saved successfully!' : 'মাটির তথ্য সফলভাবে সংরক্ষিত হয়েছে!');
+    // Set success message with recommendation instruction
+    setSaveMessage(
+      language === 'english' 
+        ? 'Soil data saved successfully! Click the "View" button in the analysis history to see recommendations.' 
+        : 'মাটির তথ্য সফলভাবে সংরক্ষিত হয়েছে! সুপারিশগুলি দেখতে বিশ্লেষণ ইতিহাসে "দেখুন" বাটনে ক্লিক করুন।'
+    );
     
-    // Clear success message after 3 seconds
+    // Reset form to default values
+    setSoilType('');
+    setPhLevel(7);
+    setMoistureLevel(50);
+    setNitrogenLevel(0);
+    setPhosphorusLevel(0);
+    setPotassiumLevel(0);
+    setLocation('');
+    setOrganicMatter(5);
+    setSoilTemp(25);
+    setSoilColor('#8B4513');
+    setSoilDepth(20);
+    setWeatherCondition('sunny');
+    setNotes('');
+    
+    // Clear success message after 5 seconds
     setTimeout(() => {
       setSaveMessage('');
-    }, 3000);
+    }, 5000);
     
   } catch (error) {
     console.error('Error saving soil data:', error);
