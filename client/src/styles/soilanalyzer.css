@@ -560,6 +560,8 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 .back-button {
@@ -594,6 +596,7 @@
     padding: 0.5rem;
     cursor: pointer;
     transition: background 0.2s;
+    margin-bottom: 12px;
 }
 
 .sort-order-button:hover {
@@ -607,6 +610,7 @@
 .action-buttons {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
 }
 
 .export-button,

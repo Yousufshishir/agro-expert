@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/dashboard.css';
-import '../styles/soilanalyzer.css';
+import '../styles/recommendationPage.css'
 import Sidebar from '../components/Sidebar';
 
 const SoilRecommendationPage = () => {
