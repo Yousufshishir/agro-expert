@@ -445,54 +445,9 @@ const SoilAnalyzerPage = () => {
     },
   };
 
-  // Determine soil health status
-  const getSoilHealthStatus = () => {
-    // This is just a simplified example
-    if (!soilType) return { status: 'unknown', color: '#ccc' };
-    
-    // Calculate average health based on multiple factors
-    let healthScore = 0;
-    
-    // pH optimality (6.0 - 7.0 is ideal for most crops)
-    const phOptimality = phLevel >= 6.0 && phLevel <= 7.0 ? 100 : 
-                          phLevel > 7.0 && phLevel <= 7.5 ? 80 :
-                          phLevel > 5.5 && phLevel < 6.0 ? 80 :
-                          phLevel > 7.5 && phLevel <= 8.0 ? 60 :
-                          phLevel > 5.0 && phLevel <= 5.5 ? 60 : 40;
-    
-    // Moisture optimality (40-60% is ideal for most soils)
-    const moistureOptimality = moistureLevel >= 40 && moistureLevel <= 60 ? 100 :
-                              moistureLevel >= 30 && moistureLevel < 40 ? 80 :
-                              moistureLevel > 60 && moistureLevel <= 70 ? 80 :
-                              moistureLevel >= 20 && moistureLevel < 30 ? 60 :
-                              moistureLevel > 70 && moistureLevel <= 80 ? 60 : 40;
-    
-    // NPK levels (simplified)
-    const nutrientOptimality = (nitrogenLevel + phosphorusLevel + potassiumLevel) / 3;
-    
-    // Organic matter (4-6% is ideal)
-    const organicOptimality = organicMatter >= 4 && organicMatter <= 6 ? 100 :
-                            organicMatter >= 3 && organicMatter < 4 ? 80 :
-                            organicMatter > 6 && organicMatter <= 8 ? 80 :
-                            organicMatter >= 2 && organicMatter < 3 ? 60 :
-                            organicMatter > 8 && organicMatter <= 10 ? 60 : 40;
-    
-    // Calculate overall health score
-    healthScore = (phOptimality + moistureOptimality + nutrientOptimality + organicOptimality) / 4;
-    
-    // Determine status based on health score
-    if (healthScore >= 80) {
-      return { status: language === 'english' ? 'Excellent' : 'অতি উত্তম', color: '#4CAF50' };
-    } else if (healthScore >= 60) {
-      return { status: language === 'english' ? 'Good' : 'ভাল', color: '#8BC34A' };
-    } else if (healthScore >= 40) {
-      return { status: language === 'english' ? 'Fair' : 'মোটামুটি', color: '#FFC107' };
-    } else {
-      return { status: language === 'english' ? 'Poor' : 'দুর্বল', color: '#F44336' };
-    }
-  };
+ 
   
-  const soilHealth = getSoilHealthStatus();
+  // const soilHealth = getSoilHealthStatus();
 
   // Show loading state
   if (loading) {
@@ -547,49 +502,7 @@ const SoilAnalyzerPage = () => {
           </div>
 
           <div className="soil-analyzer-content">
-            {/* Soil Health Status Card */}
-            {/* <div className="soil-health-card">
-              <div className="card-header">
-                <h2>{language === 'english' ? '🌿 Soil Health Status' : '🌿 মাটির স্বাস্থ্যের অবস্থা'}</h2>
-              </div>
-              <div className="soil-health-content">
-                <div className="soil-health-gauge" style={{ background: `conic-gradient(${soilHealth.color} 0%, ${soilHealth.color} 100%)` }}>
-                  <div className="soil-health-gauge-inner">
-                    <span className="soil-health-status" style={{ color: soilHealth.color }}>
-                      {soilHealth.status}
-                    </span>
-                  </div>
-                </div>
-                <div className="soil-health-details">
-                  <div className="soil-health-detail">
-                    <span className="detail-label">{language === 'english' ? 'Soil Type' : 'মাটির ধরন'}</span>
-                    <span className="detail-value">
-                      {soilType ? (language === 'english' 
-                        ? soilType.charAt(0).toUpperCase() + soilType.slice(1) 
-                        : soilType === 'sandy' 
-                          ? 'বালিময়' 
-                          : soilType === 'clay' 
-                            ? 'এঁটেল' 
-                            : soilType === 'loamy' 
-                              ? 'দোআঁশ' 
-                              : 'পলিময়') : '-'}
-                    </span>
-                  </div>
-                  <div className="soil-health-detail">
-                    <span className="detail-label">{language === 'english' ? 'pH Level' : 'পিএইচ মাত্রা'}</span>
-                    <span className="detail-value">{phLevel}</span>
-                  </div>
-                  <div className="soil-health-detail">
-                    <span className="detail-label">{language === 'english' ? 'Moisture' : 'আর্দ্রতা'}</span>
-                    <span className="detail-value">{moistureLevel}%</span>
-                  </div>
-                  <div className="soil-health-detail">
-                    <span className="detail-label">{language === 'english' ? 'Organic Matter' : 'জৈব পদার্থ'}</span>
-                    <span className="detail-value">{organicMatter}%</span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
+          
 
             <div className="soil-input-card full-width">
               <div className="card-header">
@@ -851,103 +764,12 @@ const SoilAnalyzerPage = () => {
               </div>
             </div>
 
-            {/* Soil Recommendations Card */}
-            {/* <div className="recommendations-card">
-              <div className="card-header">
-                <h2>{language === 'english' ? '🌾 Crop & Treatment Recommendations' : '🌾 ফসল এবং চিকিৎসার সুপারিশ'}</h2>
-              </div>
-              <div className="recommendation-content">
-                {!soilType ? (
-                  <div className="no-data-message">
-                    {language === 'english' 
-                      ? 'Please select a soil type and analyze to get recommendations' 
-                      : 'সুপারিশ পেতে একটি মাটির ধরন নির্বাচন করুন এবং বিশ্লেষণ করুন'}
-                  </div>
-                ) : (
-                  <>
-                    <div className="recommendation-section">
-                      <h3>{language === 'english' ? 'Suitable Crops' : 'উপযুক্ত ফসল'}</h3>
-                      <ul className="recommendation-list">
-                        {soilType === 'sandy' && (
-                          <>
-                            <li>{language === 'english' ? 'Carrots' : 'গাজর'}</li>
-                            <li>{language === 'english' ? 'Potatoes' : 'আলু'}</li>
-                            <li>{language === 'english' ? 'Radishes' : 'মূলা'}</li>
-                            <li>{language === 'english' ? 'Lettuce' : 'লেটুস'}</li>
-                          </>
-                        )}
-                        {soilType === 'clay' && (
-                          <>
-                            <li>{language === 'english' ? 'Cabbage' : 'বাঁধাকপি'}</li>
-                            <li>{language === 'english' ? 'Broccoli' : 'ব্রোকলি'}</li>
-                            <li>{language === 'english' ? 'Cauliflower' : 'ফুলকপি'}</li>
-                            <li>{language === 'english' ? 'Beans' : 'শিম'}</li>
-                          </>
-                        )}
-                        {soilType === 'loamy' && (
-                          <>
-                            <li>{language === 'english' ? 'Corn' : 'ভুট্টা'}</li>
-                            <li>{language === 'english' ? 'Tomatoes' : 'টমেটো'}</li>
-                            <li>{language === 'english' ? 'Peppers' : 'মরিচ'}</li>
-                            <li>{language === 'english' ? 'Cucumber' : 'শসা'}</li>
-                          </>
-                        )}
-                        {soilType === 'silty' && (
-                          <>
-                            <li>{language === 'english' ? 'Pumpkins' : 'কুমড়া'}</li>
-                            <li>{language === 'english' ? 'Squash' : 'স্কোয়াশ'}</li>
-                            <li>{language === 'english' ? 'Eggplant' : 'বেগুন'}</li>
-                            <li>{language === 'english' ? 'Rice' : 'চাল'}</li>
-                          </>
-                        )}
-                      </ul>
-                    </div>
-
-                    <div className="recommendation-section">
-                      <h3>{language === 'english' ? 'Soil Treatment' : 'মাটির চিকিৎসা'}</h3>
-                      <ul className="recommendation-list">
-                        {phLevel < 6.0 && (
-                          <li>{language === 'english' ? 'Add lime to increase pH level' : 'পিএইচ মাত্রা বাড়াতে চুন যোগ করুন'}</li>
-                        )}
-                        {phLevel > 7.5 && (
-                          <li>{language === 'english' ? 'Add sulfur to decrease pH level' : 'পিএইচ মাত্রা কমাতে সালফার যোগ করুন'}</li>
-                        )}
-                        {moistureLevel < 30 && (
-                          <li>{language === 'english' ? 'Increase irrigation frequency' : 'সেচের পরিমাণ বাড়ান'}</li>
-                        )}
-                        {moistureLevel > 70 && (
-                          <li>{language === 'english' ? 'Improve drainage system' : 'জল নিষ্কাশন ব্যবস্থা উন্নত করুন'}</li>
-                        )}
-                        {organicMatter < 3 && (
-                          <li>{language === 'english' ? 'Add compost or organic matter' : 'কম্পোস্ট বা জৈব পদার্থ যোগ করুন'}</li>
-                        )}
-                        {nitrogenLevel < 30 && (
-                          <li>{language === 'english' ? 'Add nitrogen-rich fertilizer' : 'নাইট্রোজেন সমৃদ্ধ সার যোগ করুন'}</li>
-                        )}
-                        {phosphorusLevel < 30 && (
-                          <li>{language === 'english' ? 'Add phosphate fertilizer' : 'ফসফেট সার যোগ করুন'}</li>
-                        )}
-                        {potassiumLevel < 30 && (
-                          <li>{language === 'english' ? 'Add potassium-rich fertilizer' : 'পটাসিয়াম সমৃদ্ধ সার যোগ করুন'}</li>
-                        )}
-                      </ul>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div> */}
-
+           
             {/* Analysis History and Charts */}
             <div className="history-card">
               <div className="card-header">
                 <h2>{language === 'english' ? '📜 Analysis History' : '📜 বিশ্লেষণ ইতিহাস'}</h2>
-                <div className="card-actions">
-                  {/* <button className="toggle-button" onClick={toggleCharts}>
-                    {showCharts 
-                      ? (language === 'english' ? 'Hide Charts' : 'চার্ট লুকান') 
-                      : (language === 'english' ? 'Show Charts' : 'চার্ট দেখান')}
-                  </button> */}
-                </div>
+               
               </div>
               
               {/* Charts Section */}

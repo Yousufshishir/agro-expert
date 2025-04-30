@@ -501,7 +501,11 @@
 }
 
 .sort-order-button:hover {
-    background: #eee;
+    background: #d9d3d3;
+}
+
+.filter-select:hover {
+    background: #d9d3d3;
 }
 
 .action-buttons {
