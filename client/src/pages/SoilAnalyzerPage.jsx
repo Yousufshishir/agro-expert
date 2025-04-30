@@ -1018,7 +1018,7 @@ const analyzeSoil = async () => {
                                   className="view-details-button"
                                   onClick={() => navigate(`/soil-analysis/${item._id}`)}
                                 >
-                                  {language === 'english' ? 'View' : 'দেখুন'}
+                                  {language === 'english' ? 'View recommended crops' : 'সুপারিশকৃত ফসলমালা দেখুন'}
                                 </button>
                                 <button 
                                   className="delete-button"

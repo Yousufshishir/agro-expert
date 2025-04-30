@@ -14,7 +14,7 @@ import './App.css';
 import CropsPage from './pages/CropsPage'; 
 import WeatherPage from './pages/WeatherPage';
 import SettingsPage from './pages/SettingsPage';
-
+import SoilRecommendationPage from './pages/SoilRecommendationPage';
 function App() {
   return (
     <AuthProvider>
@@ -37,6 +37,7 @@ function App() {
             />
             <Route path="/crops" element={<PrivateRoute><CropsPage /></PrivateRoute>} />
             <Route path="/soil-analyzer" element={<PrivateRoute><SoilAnalyzerPage /></PrivateRoute>} />
+            <Route path="/soil-analysis/:id" element={<PrivateRoute><SoilRecommendationPage /></PrivateRoute>} />
             <Route path="/weather" element={<PrivateRoute><WeatherPage /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
             
