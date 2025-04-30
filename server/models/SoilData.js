@@ -48,6 +48,38 @@ const soilDataSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    // New fields
+    organicMatter: {
+        type: Number,
+        default: 5,
+        min: 0,
+        max: 15
+    },
+    soilTemp: {
+        type: Number,
+        default: 25,
+        min: 0,
+        max: 50
+    },
+    soilColor: {
+        type: String,
+        default: '#8B4513'
+    },
+    soilDepth: {
+        type: Number,
+        default: 20,
+        min: 5,
+        max: 100
+    },
+    weatherCondition: {
+        type: String,
+        enum: ['sunny', 'cloudy', 'rainy', 'dry', 'humid'],
+        default: 'sunny'
+    },
+    notes: {
+        type: String,
+        default: ''
+    },
     createdAt: {
         type: Date,
         default: Date.now

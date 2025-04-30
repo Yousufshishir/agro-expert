@@ -6,7 +6,22 @@ import SoilData from '../models/SoilData.js';
 // @access  Private
 export const createSoilData = async(req, res) => {
     try {
-        const { soilType, phLevel, moistureLevel, nitrogen, phosphorus, potassium, location } = req.body;
+        const {
+            soilType,
+            phLevel,
+            moistureLevel,
+            nitrogen,
+            phosphorus,
+            potassium,
+            location,
+            // New fields
+            organicMatter,
+            soilTemp,
+            soilColor,
+            soilDepth,
+            weatherCondition,
+            notes
+        } = req.body;
 
         const soilData = await SoilData.create({
             user: req.user._id,
@@ -18,7 +33,14 @@ export const createSoilData = async(req, res) => {
                 phosphorus,
                 potassium
             },
-            location
+            location,
+            // Include new fields in creation
+            organicMatter,
+            soilTemp,
+            soilColor,
+            soilDepth,
+            weatherCondition,
+            notes
         });
 
         // Count how many analyses the user has performed
@@ -32,6 +54,12 @@ export const createSoilData = async(req, res) => {
                 moistureLevel: soilData.moistureLevel,
                 nutrients: soilData.nutrients,
                 location: soilData.location,
+                organicMatter: soilData.organicMatter,
+                soilTemp: soilData.soilTemp,
+                soilColor: soilData.soilColor,
+                soilDepth: soilData.soilDepth,
+                weatherCondition: soilData.weatherCondition,
+                notes: soilData.notes,
                 createdAt: soilData.createdAt,
                 analysisCount
             });

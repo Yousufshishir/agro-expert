@@ -232,68 +232,65 @@ const reverseGeocode = async (latitude, longitude) => {
     );
   }
 };
-  const analyzeSoil = async () => {
-    if (!soilType) {
-      setSaveError(language === 'english' ? 'Please select a soil type' : 'দয়া করে মাটির ধরন নির্বাচন করুন');
+const analyzeSoil = async () => {
+  if (!soilType) {
+    setSaveError(language === 'english' ? 'Please select a soil type' : 'দয়া করে মাটির ধরন নির্বাচন করুন');
+    return;
+  }
+  
+  setSaveError('');
+  setSaveMessage('');
+  
+  // Save soil data to database
+  try {
+    const token = user?.token || JSON.parse(localStorage.getItem('userInfo'))?.token;
+    
+    if (!token) {
+      setSaveError(language === 'english' ? 'Authentication error' : 'অনুমোদন ত্রুটি');
       return;
     }
     
-    setSaveError('');
-    setSaveMessage('');
+    const soilData = {
+      soilType,
+      phLevel,
+      moistureLevel,
+      nitrogen: nitrogenLevel,
+      phosphorus: phosphorusLevel,
+      potassium: potassiumLevel,
+      location,
+      // Include all new fields
+      organicMatter,
+      soilTemp,
+      soilColor,
+      soilDepth,
+      weatherCondition,
+      notes
+    };
     
-    // Save soil data to database
-    try {
-      const token = user?.token || JSON.parse(localStorage.getItem('userInfo'))?.token;
-      
-      if (!token) {
-        setSaveError(language === 'english' ? 'Authentication error' : 'অনুমোদন ত্রুটি');
-        return;
-      }
-      
-      const soilData = {
-        soilType,
-        phLevel,
-        moistureLevel,
-        nitrogen: nitrogenLevel,
-        phosphorus: phosphorusLevel,
-        potassium: potassiumLevel,
-        location,
-        // New fields
-        organicMatter,
-        soilTemp,
-        soilColor,
-        soilDepth,
-        weatherCondition,
-        notes
-      };
-      
-      const { data } = await axios.post(
-        'http://localhost:5000/api/soil-data',
-        soilData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      // Update the analysis count
-      setAnalysisCount(data.analysisCount);
-      
-      // Fetch updated soil data
-      await fetchSoilData(token);
-      
-      setSaveMessage(language === 'english' ? 'Soil data saved successfully!' : 'মাটির তথ্য সফলভাবে সংরক্ষিত হয়েছে!');
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSaveMessage('');
-      }, 3000);
-      
-      // Reset form if needed
-      // resetForm();
-      
-    } catch (error) {
-      console.error('Error saving soil data:', error);
-      setSaveError(language === 'english' ? 'Error saving soil data' : 'মাটির তথ্য সংরক্ষণ করতে ত্রুটি');
-    }
-  };
+    const { data } = await axios.post(
+      'http://localhost:5000/api/soil-data',
+      soilData,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    // Update the analysis count
+    setAnalysisCount(data.analysisCount);
+    
+    // Fetch updated soil data
+    await fetchSoilData(token);
+    
+    setSaveMessage(language === 'english' ? 'Soil data saved successfully!' : 'মাটির তথ্য সফলভাবে সংরক্ষিত হয়েছে!');
+    
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      setSaveMessage('');
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Error saving soil data:', error);
+    setSaveError(language === 'english' ? 'Error saving soil data' : 'মাটির তথ্য সংরক্ষণ করতে ত্রুটি');
+  }
+};
   
   // Format date for display
   const formatDate = (dateString) => {
