@@ -92,6 +92,12 @@ const SoilRecommendationPage = () => {
     navigate('/soil-analyzer');
   };
 
+  // Format date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+  };
+
   // Show loading state
   if (loading) {
     return (
@@ -141,39 +147,141 @@ const SoilRecommendationPage = () => {
         <div className="dashboard-content">
           <div className="soil-analyzer-header">
             <h1 className="page-title">
-              {language === 'english' ? '🌱 Soil Recommendations' : '🌱 মাটির সুপারিশ'}
+              {language === 'english' ? '🌱 Soil Analysis Details' : '🌱 মাটি বিশ্লেষণের বিবরণ'}
             </h1>
             <p className="page-subtitle">
               {language === 'english' 
-                ? 'Personalized recommendations based on your soil analysis' 
-                : 'আপনার মাটি বিশ্লেষণের উপর ভিত্তি করে ব্যক্তিগতকৃত সুপারিশ'}
+                ? 'Detailed information about your soil analysis' 
+                : 'আপনার মাটি বিশ্লেষণের বিস্তারিত তথ্য'}
             </p>
           </div>
 
           <div className="soil-analyzer-content">
-            <div className="recommendation-card full-width">
-              <div className="card-header">
-                <h2>{language === 'english' ? '📊 Soil Analysis Results' : '📊 মাটি বিশ্লেষণের ফলাফল'}</h2>
-              </div>
-              <div className="recommendation-content">
-                <div className="welcome-message">
-                  <h3>{language === 'english' ? 'Welcome to Soil Recommendations!' : 'মাটির সুপারিশে স্বাগতম!'}</h3>
-                  <p>
-                    {language === 'english' 
-                      ? 'Based on your soil analysis, we will provide personalized recommendations for optimal crop growth, fertilizer usage, and soil health improvement.' 
-                      : 'আপনার মাটি বিশ্লেষণের উপর ভিত্তি করে, আমরা সর্বোত্তম ফসল বৃদ্ধি, সার ব্যবহার এবং মাটির স্বাস্থ্য উন্নতির জন্য ব্যক্তিগতকৃত সুপারিশ প্রদান করব।'}
-                  </p>
+            {soilData ? (
+              <>
+                {/* Basic Soil Information Card */}
+                <div className="recommendation-card">
+                  <div className="card-header">
+                    <h2>{language === 'english' ? '📊 Basic Soil Information' : '📊 মূল মাটির তথ্য'}</h2>
+                  </div>
+                  <div className="recommendation-content">
+                    <div className="data-grid">
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Soil Type:' : 'মাটির ধরন:'}</span>
+                        <span className="data-value">{soilData.soilType}</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'pH Level:' : 'পিএইচ মাত্রা:'}</span>
+                        <span className="data-value">{soilData.phLevel}</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Moisture Level:' : 'আর্দ্রতা মাত্রা:'}</span>
+                        <span className="data-value">{soilData.moistureLevel}%</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Organic Matter:' : 'জৈব পদার্থ:'}</span>
+                        <span className="data-value">{soilData.organicMatter}%</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Soil Temperature:' : 'মাটির তাপমাত্রা:'}</span>
+                        <span className="data-value">{soilData.soilTemp}°C</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Soil Depth:' : 'মাটির গভীরতা:'}</span>
+                        <span className="data-value">{soilData.soilDepth} cm</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Soil Color:' : 'মাটির রং:'}</span>
+                        <div className="color-sample" style={{ backgroundColor: soilData.soilColor, width: '20px', height: '20px', display: 'inline-block', marginLeft: '8px', border: '1px solid #ddd', borderRadius: '4px' }}></div>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Weather Condition:' : 'আবহাওয়া অবস্থা:'}</span>
+                        <span className="data-value">{soilData.weatherCondition}</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Location:' : 'অবস্থান:'}</span>
+                        <span className="data-value">{soilData.location || 'Not specified'}</span>
+                      </div>
+                      <div className="data-item">
+                        <span className="data-label">{language === 'english' ? 'Analysis Date:' : 'বিশ্লেষণের তারিখ:'}</span>
+                        <span className="data-value">{formatDate(soilData.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="action-buttons">
-                  <button 
-                    onClick={handleBackToAnalyzer} 
-                    className="back-button"
-                  >
-                    {language === 'english' ? '← Back to Soil Analyzer' : '← মাটি বিশ্লেষকে ফিরে যান'}
-                  </button>
+
+                {/* Nutrient Levels Card */}
+                <div className="recommendation-card">
+                  <div className="card-header">
+                    <h2>{language === 'english' ? '🧪 Nutrient Levels' : '🧪 পুষ্টি মাত্রা'}</h2>
+                  </div>
+                  <div className="recommendation-content">
+                    <div className="nutrient-grid">
+                      <div className="nutrient-item">
+                        <span className="nutrient-label">{language === 'english' ? 'Nitrogen (N):' : 'নাইট্রোজেন (N):'}</span>
+                        <div className="nutrient-bar-container">
+                          <div className="nutrient-bar" style={{ width: `${soilData.nutrients.nitrogen}%`, backgroundColor: '#4CAF50' }}></div>
+                        </div>
+                        <span className="nutrient-value">{soilData.nutrients.nitrogen}%</span>
+                      </div>
+                      <div className="nutrient-item">
+                        <span className="nutrient-label">{language === 'english' ? 'Phosphorus (P):' : 'ফসফরাস (P):'}</span>
+                        <div className="nutrient-bar-container">
+                          <div className="nutrient-bar" style={{ width: `${soilData.nutrients.phosphorus}%`, backgroundColor: '#2196F3' }}></div>
+                        </div>
+                        <span className="nutrient-value">{soilData.nutrients.phosphorus}%</span>
+                      </div>
+                      <div className="nutrient-item">
+                        <span className="nutrient-label">{language === 'english' ? 'Potassium (K):' : 'পটাসিয়াম (K):'}</span>
+                        <div className="nutrient-bar-container">
+                          <div className="nutrient-bar" style={{ width: `${soilData.nutrients.potassium}%`, backgroundColor: '#FF9800' }}></div>
+                        </div>
+                        <span className="nutrient-value">{soilData.nutrients.potassium}%</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Notes Card */}
+                {soilData.notes && (
+                  <div className="recommendation-card">
+                    <div className="card-header">
+                      <h2>{language === 'english' ? '📝 Notes' : '📝 নোট'}</h2>
+                    </div>
+                    <div className="recommendation-content">
+                      <p className="notes-text">{soilData.notes}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Information Card */}
+                <div className="recommendation-card">
+                  <div className="card-header">
+                    <h2>{language === 'english' ? '🔍 Soil Analysis Details' : '🔍 মাটি বিশ্লেষণ বিবরণ'}</h2>
+                  </div>
+                  <div className="recommendation-content">
+                    <div className="analysis-id">
+                      <span className="label">{language === 'english' ? 'Analysis ID:' : 'বিশ্লেষণ আইডি:'}</span>
+                      <span className="value">{soilData._id}</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="no-data-message">
+                {language === 'english' 
+                  ? 'No soil analysis data found for this ID. Please try another analysis or return to the analyzer page.' 
+                  : 'এই আইডির জন্য কোন মাটি বিশ্লেষণ ডেটা পাওয়া যায়নি। অন্য বিশ্লেষণ চেষ্টা করুন বা বিশ্লেষক পৃষ্ঠায় ফিরে যান।'}
               </div>
+            )}
+            
+            <div className="action-buttons">
+              <button 
+                onClick={handleBackToAnalyzer} 
+                className="back-button"
+              >
+                {language === 'english' ? '← Back to Soil Analyzer' : '← মাটি বিশ্লেষকে ফিরে যান'}
+              </button>
             </div>
           </div>
         </div>
