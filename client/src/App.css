@@ -79,8 +79,9 @@ button {
 }
 
 button:hover {
-    background-color: #3ccb70;
+    /* background-color: #3ccb70; */
     transform: translateY(-1px);
+    transition: color 0.2s ease;
 }
 
 button:disabled {
