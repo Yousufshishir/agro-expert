@@ -16,7 +16,7 @@ import SoilRecommendationPage from './pages/SoilRecommendationPage';
 import CommunityPage from './pages/CommunityPage';
 import MarketplacePage from './pages/MarketplacePage'; // Add this import
 import './App.css';
-
+import CalendarPage from './pages/CalendarPage';
 function App() {
   return (
     <AuthProvider>
@@ -44,7 +44,7 @@ function App() {
             <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
             <Route path="/community" element={<PrivateRoute><CommunityPage /></PrivateRoute>} />
             <Route path="/marketplace" element={<PrivateRoute><MarketplacePage /></PrivateRoute>} /> {/* Add this route */}
-            
+            <Route path="/calendar" element={<PrivateRoute><CalendarPage /></PrivateRoute>} />
             {/* Admin routes */}
             <Route 
               path="/admin/dashboard" 

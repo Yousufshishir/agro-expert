@@ -53,20 +53,19 @@ const Sidebar = ({ language, handleLogout }) => {
           <span className="menu-icon">👨‍🌾</span>
           <span>{language === 'english' ? 'Community' : 'সম্প্রদায়'}</span>
         </Link>
-      </div>
-      
-      <div className="sidebar-footer">
-        
-        <Link to="/settings" className={`sidebar-menu-item ${isActive('/settings')}`}>
-          <span className="menu-icon">⚙️</span>
-          <span>{language === 'english' ? 'Settings' : 'সেটিংস'}</span>
-        </Link>
         <Link to="/logout" onClick={handleLogout} className="sidebar-menu-item ">
   <span className="menu-icon">🚪</span>
   <span>{language === 'english' ? 'Logout' : 'লগআউট'}</span>
 </Link>
-
       </div>
+      
+      {/* <div className="sidebar-footer">
+         <Link to="/settings" className={`sidebar-menu-item ${isActive('/settings')}`}>
+          <span className="menu-icon">⚙️</span>
+          <span>{language === 'english' ? 'Settings' : 'সেটিংস'}</span>
+        </Link>
+        </div> */}
+
     </div>
   );
 };
