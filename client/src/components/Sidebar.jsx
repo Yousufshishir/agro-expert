@@ -37,10 +37,6 @@ const Sidebar = ({ language, handleLogout }) => {
           <span className="menu-icon">🌦️</span>
           <span>{language === 'english' ? 'Weather' : 'আবহাওয়া'}</span>
         </Link>
-        {/* <Link to="/recommendations" className={`sidebar-menu-item ${isActive('/recommendations')}`}>
-          <span className="menu-icon">📋</span>
-          <span>{language === 'english' ? 'Recommendations' : 'সুপারিশমালা'}</span>
-        </Link> */}
         <Link to="/calendar" className={`sidebar-menu-item ${isActive('/calendar')}`}>
           <span className="menu-icon">📅</span>
           <span>{language === 'english' ? 'Farming Calendar' : 'কৃষি ক্যালেন্ডার'}</span>
@@ -53,19 +49,20 @@ const Sidebar = ({ language, handleLogout }) => {
           <span className="menu-icon">👨‍🌾</span>
           <span>{language === 'english' ? 'Community' : 'সম্প্রদায়'}</span>
         </Link>
-        <Link to="/logout" onClick={handleLogout} className="sidebar-menu-item ">
-  <span className="menu-icon">🚪</span>
-  <span>{language === 'english' ? 'Logout' : 'লগআউট'}</span>
-</Link>
+        <Link to="/logout" onClick={handleLogout} className="sidebar-menu-item">
+          <span className="menu-icon">🚪</span>
+          <span>{language === 'english' ? 'Logout' : 'লগআউট'}</span>
+        </Link>
       </div>
       
-      {/* <div className="sidebar-footer">
-         <Link to="/settings" className={`sidebar-menu-item ${isActive('/settings')}`}>
-          <span className="menu-icon">⚙️</span>
-          <span>{language === 'english' ? 'Settings' : 'সেটিংস'}</span>
-        </Link>
-        </div> */}
-
+      <div className="team-info">
+        <div className="team-name">
+          {language === 'english' ? `Meet Our Project Team:Bongondhur Shoinik` : 'এটি আমাদের প্রজেক্টের দল:\n বঙ্গবন্ধুর সৈনিক'}
+        </div>
+        <div className="team-members">
+          {language === 'english' ? 'Members: Yousuf (Leader), Tawhid, Jasim, Akib' : 'সদস্য: ইউসুফ (নেতা), তাওহিদ, জসিম, আকিব'}
+        </div>
+      </div>
     </div>
   );
 };

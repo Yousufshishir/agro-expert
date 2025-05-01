@@ -167,3 +167,19 @@
         display: none;
     }
 }
+
+.team-info {
+    padding: 15px;
+    margin-top: auto;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.team-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.team-members {
+    font-size: 11px;
+}
