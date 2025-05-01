@@ -7,7 +7,7 @@ import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import cropRoutes from './routes/cropRoutes.js';
 import soilDataRoutes from './routes/soilDataRoutes.js'; // ✅ Added
-
+import communityRoutes from './routes/communityRoutes.js';
 // Load environment variables
 dotenv.config();
 
@@ -20,7 +20,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-
+app.use(express.urlencoded({ extended: true }));
 // Setup __dirname in ES Modules
 const __filename = fileURLToPath(
     import.meta.url);
@@ -33,12 +33,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/crops', cropRoutes);
 app.use('/api/soil-data', soilDataRoutes); // ✅ Added
-
+app.use('/api/community', communityRoutes); // Add the community routes
 // Root route
 app.get('/', (req, res) => {
     res.send('API is running...');
 });
-
+// Error handling middleware
+// app.use(notFound);
+// app.use(errorHandler);
 // Port configuration
 const PORT = process.env.PORT || 5000;
 

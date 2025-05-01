@@ -1,4 +1,3 @@
-// client/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -10,11 +9,13 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SoilAnalyzerPage from './pages/SoilAnalyzerPage';
-import './App.css';
 import CropsPage from './pages/CropsPage'; 
 import WeatherPage from './pages/WeatherPage';
 import SettingsPage from './pages/SettingsPage';
 import SoilRecommendationPage from './pages/SoilRecommendationPage';
+import CommunityPage from './pages/CommunityPage';
+import './App.css';
+
 function App() {
   return (
     <AuthProvider>
@@ -40,6 +41,7 @@ function App() {
             <Route path="/soil-analysis/:id" element={<PrivateRoute><SoilRecommendationPage /></PrivateRoute>} />
             <Route path="/weather" element={<PrivateRoute><WeatherPage /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
+            <Route path="/community" element={<PrivateRoute><CommunityPage /></PrivateRoute>} />
             
             {/* Admin routes */}
             <Route 
