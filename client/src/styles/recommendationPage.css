@@ -1,170 +1,601 @@
-/* client/src/styles/recommendationPage.css */
+/* Base Styles */
+
+#recommendation-page-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#recommendation-main-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px;
+}
+
+
+/* Top Navigation */
+
+#recommendation-top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+#breadcrumb-container {
+    display: flex;
+    align-items: center;
+    color: #555;
+    font-size: 14px;
+}
+
+#home-breadcrumb {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+#analyzer-breadcrumb {
+    color: #2196F3;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+#analyzer-breadcrumb:hover {
+    color: #0d8bf2;
+}
+
+#recommendation-breadcrumb {
+    color: #333;
+    font-weight: 600;
+}
+
+#user-controls-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#language-toggle-btn {
+    background-color: #f0f4f8;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #333;
+}
+
+#language-toggle-btn:hover {
+    background-color: #e1e8ed;
+}
+
+#notification-icon {
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+}
+
+#user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+#user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Recommendation Header */
+
+#recommendation-header {
+    margin-bottom: 30px;
+}
+
+#recommendation-title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+#recommendation-subtitle {
+    font-size: 16px;
+    color: #666;
+}
+
+
+/* Recommendation Cards */
 
 .recommendation-card {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    overflow: hidden;
-    width: 100%;
-}
-
-.full-width {
-    width: 100%;
-}
-
-.card-header {
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #eaeaea;
-    padding: 15px 20px;
-}
-
-.card-header h2 {
-    color: #333;
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-}
-
-.recommendation-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     padding: 20px;
+    margin-bottom: 25px;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.welcome-message {
-    margin-bottom: 20px;
+.recommendation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-.welcome-message h3 {
-    color: #4CAF50;
+
+/* Soil Basic Info Card */
+
+#soil-info-header h2 {
     font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.welcome-message p {
-    color: #555;
-    font-size: 15px;
-    line-height: 1.6;
-}
-
-.action-buttons {
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 20px;
-}
-
-.back-button {
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 4px;
     color: #333;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 10px 15px;
-    transition: background-color 0.3s;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.back-button:hover {
-    background-color: #e0e0e0;
-}
-
-.data-grid {
+#soil-data-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
 }
 
 .data-item {
-    align-items: center;
     display: flex;
-    padding: 8px 0;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
 }
 
 .data-label {
-    color: #666;
     font-weight: 500;
-    margin-right: 8px;
+    color: #555;
 }
 
 .data-value {
-    color: #333;
     font-weight: 600;
+    color: #333;
 }
 
-.nutrient-grid {
+#color-sample {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    display: inline-block;
+    margin-left: 8px;
+}
+
+
+/* Nutrient Levels Card */
+
+#nutrient-header h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#nutrient-grid {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
 .nutrient-item {
-    align-items: center;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
 }
 
 .nutrient-label {
-    color: #666;
     font-weight: 500;
-    width: 140px;
+    color: #555;
+    min-width: 120px;
 }
 
 .nutrient-bar-container {
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    flex-grow: 1;
-    height: 15px;
+    flex: 1;
+    height: 10px;
+    background-color: #eee;
+    border-radius: 5px;
     overflow: hidden;
-    width: calc(100% - 200px);
 }
 
 .nutrient-bar {
     height: 100%;
-    transition: width 0.5s ease;
+    border-radius: 5px;
 }
 
 .nutrient-value {
-    color: #333;
     font-weight: 600;
-    width: 50px;
+    color: #333;
+    min-width: 40px;
     text-align: right;
 }
 
-.notes-text {
-    background-color: #f9f9f9;
-    border-left: 4px solid #4CAF50;
+
+/* Notes Card */
+
+#notes-header h2 {
+    font-size: 20px;
     color: #333;
-    font-style: italic;
-    line-height: 1.6;
-    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.analysis-id {
+#notes-text {
+    color: #444;
+    line-height: 1.6;
+}
+
+
+/* Crop Recommendations Card */
+
+#crop-recommendations-header h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
     align-items: center;
-    background-color: #f9f9f9;
-    border-radius: 4px;
+    gap: 10px;
+}
+
+#crop-recommendations-card #recommendation-intro-text {
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+#crop-recommendations-card #crop-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+#crop-recommendations-card .crop-item {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+#crop-recommendations-card .crop-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border-color: #4CAF50;
+}
+
+.crop-item.selected {
+    background-color: #f0f7f0;
+    border-color: #4CAF50;
+}
+
+#crop-recommendations-card .crop-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+}
+
+#crop-recommendations-card .crop-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#crop-recommendations-card .crop-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#crop-recommendations-card .crop-category {
+    font-size: 13px;
+    color: #666;
+    background-color: #f0f4f8;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+#no-crops-message {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+}
+
+
+/* Analysis Details Card */
+
+#analysis-details-header h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#analysis-id-container {
+    display: flex;
+    gap: 10px;
+}
+
+#analysis-id-label {
+    font-weight: 500;
+    color: #555;
+}
+
+#analysis-id-value {
+    font-family: monospace;
+    color: #333;
+}
+
+
+/* Action Buttons */
+
+#action-buttons-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+#back-button {
+    background-color: #f0f4f8;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#back-button:hover {
+    background-color: #e1e8ed;
+}
+
+
+/* No Data Message */
+
+#no-data-message {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Loading State */
+
+#loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f5f7fa;
+}
+
+#loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loading-text {
+    font-size: 18px;
+    color: #555;
+}
+
+
+/* Crop Details Modal */
+
+#crop-details-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+#modal-content-container {
+    background-color: white;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#modal-header-container {
     display: flex;
     justify-content: space-between;
-    padding: 15px;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
 }
 
-.analysis-id .label {
-    color: #666;
-    font-weight: 500;
-}
-
-.analysis-id .value {
+#modal-title {
+    margin: 0;
+    font-size: 22px;
     color: #333;
-    font-family: monospace;
-    font-size: 14px;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.no-data-message {
-    background-color: #fff3cd;
-    border-left: 4px solid #ffc107;
-    color: #856404;
+#modal-close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+#modal-close-button:hover {
+    color: #333;
+}
+
+#modal-body-container {
+    padding: 20px;
+}
+
+#modal-loading-spinner {
+    text-align: center;
+    padding: 40px 0;
+    color: #666;
+}
+
+#crop-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+#modal-crop-image {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#modal-crop-image img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#crop-info-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.crop-info-item {
+    display: flex;
+    flex-direction: column;
     padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+}
+
+.info-label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.info-value {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+}
+
+#diseases-section h3,
+#tips-section h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+#diseases-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.disease-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #f44336;
+}
+
+.disease-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #d32f2f;
+}
+
+.disease-treatment {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+}
+
+#tips-text {
+    color: #444;
+    line-height: 1.6;
+    padding: 0 5px;
 }
