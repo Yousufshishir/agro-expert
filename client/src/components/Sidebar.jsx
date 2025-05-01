@@ -57,10 +57,10 @@ const Sidebar = ({ language, handleLogout }) => {
       
       <div className="team-info">
         <div className="team-name">
-          {language === 'english' ? `Meet Our Project Team:Bongondhur Shoinik` : 'এটি আমাদের প্রজেক্টের দল:\n বঙ্গবন্ধুর সৈনিক'}
+          {language === 'english' ? `Developed By` : 'Developed By'}
         </div>
         <div className="team-members">
-          {language === 'english' ? 'Members: Yousuf (Leader), Tawhid, Jasim, Akib' : 'সদস্য: ইউসুফ (নেতা), তাওহিদ, জসিম, আকিব'}
+          {language === 'english' ? 'Yousuf (Leader), Tawhid, Jasim, Akib' :'Yousuf (Leader), Tawhid, Jasim, Akib'}
         </div>
       </div>
     </div>
