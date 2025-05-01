@@ -14,6 +14,7 @@ import WeatherPage from './pages/WeatherPage';
 import SettingsPage from './pages/SettingsPage';
 import SoilRecommendationPage from './pages/SoilRecommendationPage';
 import CommunityPage from './pages/CommunityPage';
+import MarketplacePage from './pages/MarketplacePage'; // Add this import
 import './App.css';
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <Route path="/weather" element={<PrivateRoute><WeatherPage /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
             <Route path="/community" element={<PrivateRoute><CommunityPage /></PrivateRoute>} />
+            <Route path="/marketplace" element={<PrivateRoute><MarketplacePage /></PrivateRoute>} /> {/* Add this route */}
             
             {/* Admin routes */}
             <Route 

@@ -1,0 +1,432 @@
+/* client/src/styles/marketplace.css */
+
+
+/* Marketplace Header Styles */
+
+.marketplace-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-subtitle {
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+/* Search and Filter Controls */
+
+.marketplace-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    background-color: #f9f9f9;
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+}
+
+
+/* .search-button {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+} */
+
+.filter-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.price-filter {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.price-filter:focus {
+    outline: none;
+    border-color: #27ae60;
+}
+
+
+/* Categories Styles */
+
+.marketplace-categories {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #27ae60 #f5f5f5;
+}
+
+.marketplace-categories::-webkit-scrollbar {
+    height: 6px;
+}
+
+.marketplace-categories::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.marketplace-categories::-webkit-scrollbar-thumb {
+    background-color: #27ae60;
+    border-radius: 20px;
+}
+
+.category-button {
+    padding: 0.6rem 1.2rem;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.category-button:hover {
+    background-color: #e9f7ef;
+    border-color: #27ae60;
+}
+
+.category-button.active {
+    background-color: #27ae60;
+    color: white;
+    border-color: #27ae60;
+}
+
+
+/* Products Grid */
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.product-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+    height: 180px;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-rating {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.star {
+    color: #f39c12;
+    margin-right: 4px;
+}
+
+.product-details {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.product-description {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    flex-grow: 1;
+}
+
+.product-price-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.product-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #27ae60;
+}
+
+.buy-button {
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    text-align: center;
+}
+
+.buy-button:hover {
+    background-color: #2980b9;
+}
+
+.no-products-message {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+
+/* Featured Suppliers */
+
+.marketplace-suppliers {
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.suppliers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+.supplier-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.supplier-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    background-color: #e9f7ef;
+}
+
+.supplier-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    color: white;
+    background-color: #27ae60;
+}
+
+.supplier-name {
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+
+/* Promotional Banner */
+
+.promo-banner {
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+}
+
+.promo-content {
+    max-width: 600px;
+}
+
+.promo-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.promo-text {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+}
+
+.promo-button {
+    padding: 0.75rem 1.5rem;
+    background-color: white;
+    color: #27ae60;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.promo-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Market Tips */
+
+.market-tips {
+    margin-bottom: 2rem;
+}
+
+.tips-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.tip-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease;
+    border-left: 4px solid #27ae60;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+}
+
+.tip-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.tip-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
+}
+
+.tip-text {
+    font-size: 0.95rem;
+    color: #7f8c8d;
+}
+
+
+/* Responsive Adjustments */
+
+@media (max-width: 768px) {
+    .marketplace-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-container,
+    .filter-container {
+        width: 100%;
+    }
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .suppliers-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .tips-container {
+        grid-template-columns: 1fr;
+    }
+}
