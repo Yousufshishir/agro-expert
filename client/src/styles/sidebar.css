@@ -170,17 +170,170 @@
 }
 
 .team-info {
-    padding: 15px;
+    padding: 25px;
     margin-top: auto;
-    font-size: 12px;
-    color: #ffffff;
+    font-size: 14px;
+    color: transparent;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    border-radius: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
+    transform: perspective(500px) rotateX(15deg);
+    animation: float 6s ease-in-out infinite, borderPulse 4s infinite alternate;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.team-info::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient( to bottom right, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 55%);
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
 }
 
 .team-name {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, #f3ec78, #af4261);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 0 0 10px rgba(179, 147, 211, 0.3);
+    position: relative;
+    display: inline-block;
+    animation: textGlow 2s infinite alternate;
+}
+
+.team-name::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #f3ec78, transparent);
+    border-radius: 100%;
+    filter: blur(1px);
+    animation: linePulse 2.5s infinite;
 }
 
 .team-members {
-    font-size: 11px;
+    font-size: 14px;
+    line-height: 1.8;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.member-name {
+    background: linear-gradient(90deg, #8a2387, #e94057, #f27121);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding: 2px 8px;
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.4s ease;
+    animation: nameFloat 4s infinite ease-in-out;
+    animation-delay: calc(var(--i) * 0.2s);
+}
+
+.member-name:hover {
+    transform: translateY(-5px) scale(1.1);
+    text-shadow: 0 5px 15px rgba(242, 113, 33, 0.4);
+}
+
+.member-name::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #8a2387, #e94057, #f27121);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    filter: blur(8px);
+}
+
+.member-name:hover::before {
+    opacity: 0.6;
+}
+
+
+/* Animations */
+
+@keyframes float {
+    0%,
+    100% {
+        transform: perspective(500px) rotateX(15deg) translateY(0);
+    }
+    50% {
+        transform: perspective(500px) rotateX(15deg) translateY(-10px);
+    }
+}
+
+@keyframes borderPulse {
+    0% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+    100% {
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15);
+    }
+}
+
+@keyframes shine {
+    0% {
+        transform: translateY(-100%) rotate(30deg);
+    }
+    100% {
+        transform: translateY(100%) rotate(30deg);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 0 10px rgba(179, 147, 211, 0.3);
+    }
+    100% {
+        text-shadow: 0 0 20px rgba(179, 147, 211, 0.6);
+    }
+}
+
+@keyframes linePulse {
+    0%,
+    100% {
+        width: 60%;
+        opacity: 1;
+    }
+    50% {
+        width: 80%;
+        opacity: 0.7;
+    }
+}
+
+@keyframes nameFloat {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
 }

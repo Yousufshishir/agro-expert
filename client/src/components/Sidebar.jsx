@@ -37,10 +37,10 @@ const Sidebar = ({ language, handleLogout }) => {
           <span className="menu-icon">🌦️</span>
           <span>{language === 'english' ? 'Weather' : 'আবহাওয়া'}</span>
         </Link>
-        <Link to="/calendar" className={`sidebar-menu-item ${isActive('/calendar')}`}>
+        {/* <Link to="/calendar" className={`sidebar-menu-item ${isActive('/calendar')}`}>
           <span className="menu-icon">📅</span>
           <span>{language === 'english' ? 'Farming Calendar' : 'কৃষি ক্যালেন্ডার'}</span>
-        </Link>
+        </Link> */}
         <Link to="/marketplace" className={`sidebar-menu-item ${isActive('/marketplace')}`}>
           <span className="menu-icon">🛒</span>
           <span>{language === 'english' ? 'Marketplace' : 'বাজার'}</span>
@@ -54,15 +54,22 @@ const Sidebar = ({ language, handleLogout }) => {
           <span>{language === 'english' ? 'Logout' : 'লগআউট'}</span>
         </Link>
       </div>
-      
       <div className="team-info">
-        <div className="team-name">
-          {language === 'english' ? `Developed By : ` : 'Developed By : '}
-        </div>
-        <div className="team-members">
-          {language === 'english' ? 'Yousuf (Leader), Tawhid, Jasim, Akib' :'Yousuf (Leader), Tawhid, Jasim, Akib'}
-        </div>
-      </div>
+    <div className="team-name">
+        {language === 'english' ? `DEVELOPED BY` : 'DEVELOPED BY'}
+    </div>
+    <div className="team-members">
+        {['Yousuf (Leader)', 'Tawhid', 'Jasim', 'Akib'].map((member, i) => (
+            <span 
+                className="member-name" 
+                key={member}
+                style={{ '--i': i }}
+            >
+                {member}
+            </span>
+        ))}
+    </div>
+</div>
     </div>
   );
 };
