@@ -58,9 +58,10 @@
 
 /* Add scrollbar styling */
 
-.sidebar-menu::-webkit-scrollbar {
+
+/* .sidebar-menu::-webkit-scrollbar {
     width: 5px;
-}
+} */
 
 .sidebar-menu::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
@@ -91,7 +92,7 @@
 .sidebar-menu-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    transform: translateX(5px);
+    /* transform: translateX(5px); */
 }
 
 .sidebar-menu-item.active {
