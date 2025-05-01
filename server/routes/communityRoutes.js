@@ -1,24 +1,22 @@
+// server/routes/communityRoutes.js
+
 import express from 'express';
 import {
     submitFeedback,
     getUserFeedback,
     getAllFeedback,
-    respondToFeedback
+    getFeedbackStats
 } from '../controllers/communityController.js';
 import { protect, admin } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // User routes
-router.route('/feedback')
-    .post(protect, submitFeedback)
-    .get(protect, getUserFeedback);
+router.post('/feedback', protect, submitFeedback);
+router.get('/feedback', protect, getUserFeedback);
 
 // Admin routes
-router.route('/feedback/all')
-    .get(protect, admin, getAllFeedback);
-
-router.route('/feedback/:id')
-    .put(protect, admin, respondToFeedback);
+router.get('/feedback/all', protect, admin, getAllFeedback);
+router.get('/feedback/stats', protect, admin, getFeedbackStats);
 
 export default router;

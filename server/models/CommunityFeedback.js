@@ -1,3 +1,5 @@
+// server/models/CommunityFeedback.js
+
 import mongoose from 'mongoose';
 
 const communityFeedbackSchema = mongoose.Schema({
@@ -7,34 +9,52 @@ const communityFeedbackSchema = mongoose.Schema({
         ref: 'User'
     },
     currentCrops: {
-        type: String,
-        required: true
+        type: [String],
+        default: []
     },
-    futureCrops: {
+    plannedCrops: {
+        type: [String],
+        default: []
+    },
+    farmingMethod: {
         type: String,
-        default: ''
+        enum: ['conventional', 'organic', 'hybrid'],
+        default: 'conventional'
+    },
+    farmSize: {
+        type: String,
+        enum: ['small', 'medium', 'large'],
+        default: 'small'
+    },
+    farmingExperience: {
+        type: String,
+        enum: ['beginner', 'intermediate', 'experienced'],
+        default: 'beginner'
     },
     challenges: {
+        type: [String],
+        default: []
+    },
+    preferredAssistance: {
+        type: [String],
+        default: []
+    },
+    notes: {
         type: String,
         default: ''
     },
-    suggestions: {
+    improvementSuggestions: {
         type: String,
         default: ''
     },
-    communityQuestion: {
+    farmingArea: {
         type: String,
         default: ''
     },
-    // Optional field to track if admin has reviewed the feedback
-    isReviewed: {
-        type: Boolean,
-        default: false
-    },
-    // Optional field for admin responses to questions
-    adminResponse: {
+    preferredCommunication: {
         type: String,
-        default: ''
+        enum: ['app', 'sms', 'email', 'whatsapp'],
+        default: 'app'
     }
 }, {
     timestamps: true
